@@ -1,6 +1,7 @@
 import { Alert, Button, FileInput, Select, TextInput } from "flowbite-react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import "./DashEvents.css";
 import {
   getDownloadURL,
   getStorage,
@@ -95,6 +96,45 @@ export default function CreatePost() {
       <h1 className="text-center text-3xl my-7 font-semibold">
         Create A Event
       </h1>
+      <div className="Dropdown">
+      { (
+          <Select
+
+            onChange={(e) =>
+              setFormData({ ...formData, readingType: e.target.value })
+            }
+          >
+            <option value="uncategorized">Select a category</option>
+                    <option value="agriculture">Agriculture</option>
+                    <option value="bollywood">Bollywood</option>
+                    <option value="business">Business</option>
+                    <option value="crime">Crime</option>
+                    <option value="economy">Economy</option>
+                    <option value="education">Education</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="environment">Environment</option>
+                    <option value="events">Events</option>
+                    <option value="fashion">Fashion</option>
+                    <option value="foreign">Foreign</option>
+                    <option value="general">General</option>
+                    <option value="health">Health</option>
+                    <option value="hollywood">Hollywood</option>
+                    <option value="international">International</option>
+                    <option value="legal">Legal</option>
+                    <option value="lifestyle">Lifestyle</option>
+                    <option value="national">National</option>
+                    <option value="politics">Politics</option>
+                    <option value="religious">Religious</option>
+                    <option value="science">Science</option>
+                    <option value="sports">Sports</option>
+                    <option value="stock market">Stock Market</option>
+                    <option value="technology">Technology</option>
+                    <option value="weather">Weather</option>
+                    <option value="other">Other</option>
+          </Select>
+        )}
+      </div>
+      
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-4 sm:flex-row justify-between">
           <TextInput

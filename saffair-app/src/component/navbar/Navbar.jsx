@@ -1,138 +1,138 @@
-import React, { useState, useEffect } from "react";
-import "./navbar.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useState, useEffect } from 'react'
+import './navbar.css'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faMagnifyingGlass,
   faBars,
   faXmark,
-} from "@fortawesome/free-solid-svg-icons";
+} from '@fortawesome/free-solid-svg-icons'
 import {
   Avatar,
   Button,
   Dropdown,
   TextInput,
   Navbar as Nb,
-} from "flowbite-react";
-import { useSelector, useDispatch } from "react-redux";
+} from 'flowbite-react'
+import { useSelector, useDispatch } from 'react-redux'
 
-import { Link } from "react-router-dom";
-import { useContext } from "react";
-import { SearchpostContext } from "../../page/Home";
-import { signoutSuccess } from "../../redux/user/userSlice";
-import { FaMoon, FaSun } from "react-icons/fa";
-import { toggleTheme } from "../../redux/theme/themeSlice";
+import { Link } from 'react-router-dom'
+import { useContext } from 'react'
+import { SearchpostContext } from '../../page/Home'
+import { signoutSuccess } from '../../redux/user/userSlice'
+import { FaMoon, FaSun } from 'react-icons/fa'
+import { toggleTheme } from '../../redux/theme/themeSlice'
 
 // import { Dropdown } from "flowbite-react";
 
 export default function Navbar({ _id }) {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user)
   // const { theme } = useSelector((state) => state.theme);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
-  const { search, setSearch } = useContext(SearchpostContext);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [searchResults, setSearchResults] = useState([]);
-  const [posts, setPosts] = useState([]);
-  const [isTitleClicked, setIsTitleClicked] = useState(false);
-  const [coin, setCoin] = useState("");
+  const { search, setSearch } = useContext(SearchpostContext)
+  const [isOpen, setIsOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [searchResults, setSearchResults] = useState([])
+  const [posts, setPosts] = useState([])
+  const [isTitleClicked, setIsTitleClicked] = useState(false)
+  const [coin, setCoin] = useState('')
 
   // const handleTitleClick = () => {
   //   setIsTitleClicked(!isTitleClicked); // Set the state to true when a title is clicked
   // };
 
-  const id = currentUser ? currentUser._id : null;
+  const id = currentUser ? currentUser._id : null
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`http://localhost:6600/api/user/${id}`);
+        const res = await fetch(`http://localhost:6600/api/user/${id}`)
 
         if (res.ok) {
-          const data = await res.json();
-          setCoin(data.totalCoins);
+          const data = await res.json()
+          setCoin(data.totalCoins)
         }
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
-    };
+    }
 
-    fetchData();
-  }, [id]);
+    fetchData()
+  }, [id])
 
   useEffect(() => {
     // Fetch posts from the server
-    fetch("http://localhost:6600/post")
+    fetch('http://localhost:6600/post')
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Failed to fetch posts");
+          throw new Error('Failed to fetch posts')
         }
-        return response.json();
+        return response.json()
       })
       .then((posts) => {
-        setPosts(posts);
+        setPosts(posts)
       })
       .catch((error) => {
-        console.error("Error fetching posts:", error);
-      });
-  }, []);
+        console.error('Error fetching posts:', error)
+      })
+  }, [])
 
   useEffect(() => {
     // Filter posts based on search keyword
-    if (search.trim() !== "") {
+    if (search.trim() !== '') {
       const filteredResults = posts.filter((post) =>
-        post.title.toLowerCase().includes(search.toLowerCase())
-      );
-      setSearchResults(filteredResults);
+        post.title.toLowerCase().includes(search.toLowerCase()),
+      )
+      setSearchResults(filteredResults)
     } else {
-      setSearchResults([]);
+      setSearchResults([])
     }
-  }, [search, posts]);
+  }, [search, posts])
 
   const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
+    setIsOpen(!isOpen)
+  }
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const isTop = scrollTop < 50;
+      const scrollTop = window.scrollY
+      const isTop = scrollTop < 50
 
-      setIsScrolled(!isTop);
-    };
+      setIsScrolled(!isTop)
+    }
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll)
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
   // console.log(currentUser.profilePicture);
   const handleSignout = async () => {
     try {
-      const res = await fetch("http://localhost:6600/api/user/signout", {
-        method: "POST",
-      });
-      const data = await res.json();
-      console.log("this is data : " + data);
+      const res = await fetch('http://localhost:6600/api/user/signout', {
+        method: 'POST',
+      })
+      const data = await res.json()
+      console.log('this is data : ' + data)
       if (!res.ok) {
         // console.log(data.message);
       } else {
-        dispatch(signoutSuccess());
+        dispatch(signoutSuccess())
       }
     } catch (error) {
-      console.log(error.message);
+      console.log(error.message)
     }
-  };
+  }
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
-    });
-  };
+      behavior: 'smooth',
+    })
+  }
   return (
     <div
       // className={`navbarContainer fixed top-0 ${isScrolled ? "scrolled" : ""}`}
-      className={`navbarContainer  top-0 ${isScrolled ? "scrolled" : ""}`}
+      className={`navbarContainer  top-0 ${isScrolled ? 'scrolled' : ''}`}
     >
       <div className="leftNevbar">
         <div className="logoContainer">
@@ -160,7 +160,7 @@ export default function Navbar({ _id }) {
               arrowIcon={false}
             >
               <Link to="/blog" className="links">
-                {" "}
+                {' '}
                 <Dropdown.Item>Blogs</Dropdown.Item>
               </Link>
               <Link to="/news" className="links">
@@ -171,10 +171,10 @@ export default function Navbar({ _id }) {
               </Link>
             </Dropdown>
             <Link to="/events">
-            <a className="centerItem" onClick={scrollToTop}>
-              Campaigns
-            </a>
-          </Link>
+              <a className="centerItem" onClick={scrollToTop}>
+                Campaigns
+              </a>
+            </Link>
           </div>
           {/* <Link to="/readings">
             <a className="centerItem" onClick={scrollToTop}>
@@ -191,7 +191,7 @@ export default function Navbar({ _id }) {
               Contact Us
             </a>
           </Link>
-         
+
           {/* <Link to="/privacypolicy">
             <a className="centerItem">Privacy Policy</a>
           </Link> */}
@@ -214,7 +214,7 @@ export default function Navbar({ _id }) {
               <>
                 <div
                   className="flex items-center p-0.5 rounded-full"
-                  style={{ border: "0.5px solid #2196ba" }}
+                  style={{ border: '0.5px solid #2196ba' }}
                 >
                   <Avatar
                     alt="user"
@@ -245,31 +245,35 @@ export default function Navbar({ _id }) {
               </span>
             </Dropdown.Header>
             {currentUser.isAdmin ? (
-              <Link to={"/dashboard?tab=profile"} onClick={scrollToTop}>
+              <Link to={'/dashboard?tab=profile'} onClick={scrollToTop}>
                 <Dropdown.Item>Profile</Dropdown.Item>
               </Link>
             ) : (
               <>
-                <Link to={"/dashboard?tab=profile"} onClick={scrollToTop}>
+                <Link to={'/dashboard?tab=profile'} onClick={scrollToTop}>
                   <Dropdown.Item>Profile</Dropdown.Item>
                 </Link>
                 <Link
-                  to={currentUser.isContributor ? "/createblog" : "/dashboard?tab=be-a-contributor"}
+                  to={
+                    currentUser.isContributor
+                      ? '/createblog'
+                      : '/dashboard?tab=be-a-contributor'
+                  }
                   onClick={scrollToTop}
                 >
-                  <Dropdown.Item>{currentUser.isContributor ? "Let's create" : "Let's create"}</Dropdown.Item>
-                </Link>
-
-                <Link to="/dashboard?tab=mycoins" onClick={scrollToTop}>
-                  <Dropdown.Item>{coin} Coins</Dropdown.Item>
+                  <Dropdown.Item>
+                    {currentUser.isContributor
+                      ? "Let's Contribute"
+                      : "Let's Contribute"}
+                  </Dropdown.Item>
                 </Link>
               </>
             )}
             <Dropdown.Divider />
             <Dropdown.Item
               onClick={() => {
-                handleSignout();
-                scrollToTop();
+                handleSignout()
+                scrollToTop()
               }}
             >
               Sign out
@@ -281,10 +285,10 @@ export default function Navbar({ _id }) {
               <button
                 className="hidden sm:flex"
                 style={{
-                  backgroundColor: "#1896ba",
-                  color: "white",
-                  padding: "11px",
-                  borderRadius: "5px",
+                  backgroundColor: '#1896ba',
+                  color: 'white',
+                  padding: '11px',
+                  borderRadius: '5px',
                 }}
               >
                 Join Community
@@ -292,7 +296,6 @@ export default function Navbar({ _id }) {
             </Link>
           </div>
         )}
-
 
         <Link to="/searchpage" onClick={scrollToTop}>
           <FontAwesomeIcon icon={faMagnifyingGlass} className="searchIcon" />
@@ -304,23 +307,23 @@ export default function Navbar({ _id }) {
           <div
             className="dropbox"
             id="dropdownMenu"
-            style={{ display: isOpen ? "block" : "none" }}
+            style={{ display: isOpen ? 'block' : 'none' }}
           >
             <div>
               <FontAwesomeIcon
                 icon={faXmark}
                 style={{
-                  top: "20px",
-                  left: "20px",
-                  position: "absolute",
-                  fontSize: "20px",
-                  cursor: "pointer",
+                  top: '20px',
+                  left: '20px',
+                  position: 'absolute',
+                  fontSize: '20px',
+                  cursor: 'pointer',
                 }}
                 onClick={toggleDropdown}
               />
             </div>
 
-            <Link to="/" style={{ textDecoration: "none" }}>
+            <Link to="/" style={{ textDecoration: 'none' }}>
               <a className="dropdown-item" href="#" onClick={toggleDropdown}>
                 Home
               </a>
@@ -343,5 +346,5 @@ export default function Navbar({ _id }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
