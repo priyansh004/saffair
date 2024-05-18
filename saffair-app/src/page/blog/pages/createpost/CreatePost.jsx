@@ -396,7 +396,7 @@ onChange={(e) =>
           }}
         />
 
-        <div>
+        {/* <div>
           <h2>Create Quiz</h2>
           <TextInput
             type="text"
@@ -425,7 +425,7 @@ onChange={(e) =>
             className="mb-2"
           />
           <Button onClick={handleQuizSubmit}>Add Quiz</Button>
-        </div>
+        </div> */}
         {currentUser.isAdmin ? (
           <Button type="submit" gradientDuoTone="cyanToBlue">
             Publish
