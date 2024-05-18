@@ -211,6 +211,24 @@ export default function CreatePost() {
         Create A Readings
       </h1>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+      <Select
+
+onChange={(e) =>
+  setFormData({ ...formData, readingType: e.target.value })
+}
+>
+<option value="Blog">Blog</option>
+<option value="News">News</option>
+<option value="Update">Update</option>
+<option value="legal">Legal Updates</option>
+<option value="Blog">innovation</option>
+<option value="community">get your voice bigger with community</option>
+<option value="Blog">suggest a reforms</option>
+<option value="campaign">join our campaigns</option>
+<option value="Blog">Donate/Sponser</option>
+<option value="Blog">Get outdoor Air Analyzer</option>
+<option value="support">Need Community Support/Suggestions/Survey</option>
+</Select>
         {currentUser.isAdmin && (
           <Select
 

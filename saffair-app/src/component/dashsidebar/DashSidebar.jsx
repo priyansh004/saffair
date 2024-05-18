@@ -158,29 +158,48 @@ export default function DashSidebar() {
                 </Sidebar.Item>
               </Link>
               <Sidebar.Collapse icon={HiOutlineUserGroup} label=" Contributors">
-                <Link to="/dashboard?tab=postrequest" onClick={scrollToTop}>
-                  {" "}
-                  <Sidebar.Item
-                    icon={FaClipboardList}
-                    action={tab === "postrequest"}
-                  >
-                    Post Request
-                  </Sidebar.Item>
-                </Link>
-                <Link to="/dashboard?tab=contributors" onClick={scrollToTop}>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+  <Link
+    to="/dashboard?tab=contributors"
+    onClick={scrollToTop}
+    style={{ textDecoration: "none", color: "inherit", marginBottom: "10px",marginLeft:"10px"}}
+  >
+    <Sidebar.Item icon={FaClipboardList}>Total Contributors</Sidebar.Item>
+  </Link>
+  <Link
+    to="/dashboard?tab=reqCon"
+    onClick={scrollToTop}
+    style={{ textDecoration: "none", color: "inherit", marginBottom: "10px" }}
+  >
+    <Sidebar.Item action={tab === "reqCon"} icon={HiOutlineUserGroup}>
+      Requests
+    </Sidebar.Item>
+  </Link>
+  <Link
+    to="/dashboard?tab=postrequest"
+    onClick={scrollToTop}
+    style={{ textDecoration: "none", color: "inherit", marginBottom: "10px" }}
+  >
+    <Sidebar.Item icon={FaClipboardList} action={tab === "postrequest"}>
+      Post Request
+    </Sidebar.Item>
+  </Link>
+</div>
+
+                {/* <Link to="/dashboard?tab=contributors" onClick={scrollToTop}>
                   {" "}
                   <Sidebar.Item icon={FaClipboardList}>
                     Total Contributors
                   </Sidebar.Item>
-                </Link>
-                <Link to="/dashboard?tab=reqCon" onClick={scrollToTop}>
+                </Link> */}
+                {/* <Link to="/dashboard?tab=reqCon" onClick={scrollToTop}>
                   <Sidebar.Item
                     action={tab === "reqCon"}
                     icon={HiOutlineUserGroup}
                   >
                     Requests{" "}
                   </Sidebar.Item>
-                </Link>
+                </Link> */}
               </Sidebar.Collapse>
               <Link to="/dashboard?tab=comments" onClick={scrollToTop}>
                 <Sidebar.Item

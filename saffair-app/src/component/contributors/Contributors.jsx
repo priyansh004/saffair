@@ -19,7 +19,7 @@ import {
   deleteUserFailure,
   signoutSuccess,
 } from "../../redux/user/userSlice";
-import { getAuth, signInWithPhoneNumber, confirmOTP, RecaptchaVerifier, updatePhoneNumber, RecaptchaVerifier_Instance, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithPhoneNumber, confirmOTP, RecaptchaVerifier, updatePhoneNumber, RecaptchaVerifier_Instance, signInWithEmailAndPassword} from "firebase/auth";
 import PhoneInput from "react-phone-input-2";
 import { app } from "../../firebase.js"
 
@@ -59,7 +59,7 @@ const gradeOptions = [
 ];
 
 export default function Contributors() {
-  const auth = getAuth(app);
+  // const auth = getAuth(app);
   
   const {
     currentUser,
@@ -77,12 +77,67 @@ export default function Contributors() {
   const [showForm, setShowForm] = useState(true);
   const [showAlert, setShowAlert] = useState(false);
   const [users, setUsers] = useState([]);
-  const [phoneNumber, setPhoneNumber] = useState("");
+  // const [phoneNumber, setPhoneNumber] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [verificationId, setVerificationId] = useState("");
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
   const recaptchaVerifier = useRef(null);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [otp, setOtp] = useState('');
+
+  const auth = getAuth(app); // Get the Auth instance from the initialized Firebase app
+  const configureCaptcha = () => {
+    window.recaptchaVerifier = new RecaptchaVerifier(auth,'sign-in-button', {
+      'size': 'invisible',
+      'callback': (response) => {
+        // reCAPTCHA solved, allow signInWithPhoneNumber.
+        handleSendCode();
+        console.log("Recaptcha verified");
+      },
+      'appVerificationDisabledForTesting': true, // Add this line if you're running tests
+      defaultCountry: "IN"
+    });
+  };
+
+  const handleSendCode = async (e) => {
+    e.preventDefault();
+    configureCaptcha();
+    const phoneNum = "+91" + phoneNumber;
+    console.log(phoneNum);
+    const appVerifier = window.recaptchaVerifier;
+    signInWithPhoneNumber(auth, phoneNum, appVerifier)
+      .then((confirmationResult) => {
+        // SMS sent. Prompt user to type the code from the message, then sign the
+        // user in with confirmationResult.confirm(code).
+        window.confirmationResult = confirmationResult;
+        console.log("OTP has been sent");
+      }).catch((error) => {
+        // Error; SMS not sent
+        console.log("SMS not sent", error);
+      });
+  };
+  const handleVerifyCode = (event) => {
+    let otp = verificationCode;
+  
+    if (otp.length === 6) {
+      // Verify OTP
+      let confirmationResult = window.confirmationResult;
+      confirmationResult.confirm(otp).then((result) => {
+        // User signed in successfully.
+        let user = result.user;
+        console.log(user);
+        alert('User signed in successfully');
+        // ...
+      }).catch((error) => {
+        // User couldn't sign in (bad verification code?)
+        // ...
+        alert('User couldn\'t sign in (bad verification code?)');
+      });
+    }
+  };
+  
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
@@ -189,101 +244,88 @@ export default function Contributors() {
   // const recaptchaContainerRef = React.createRef();
 
   
-
-  // const handleSendCode = async (e) => {
-  //   e.preventDefault()
-  //   this.configureCaptcha()
-  //   const phoneNum = "+91" + phoneNumber
-  //   console.log(phoneNum)
-  //   const appVerifier = window.recaptchaVerifier;
-  //   app.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
-  //       .then((confirmationResult) => {
-  //         // SMS sent. Prompt user to type the code from the message, then sign the
-  //         // user in with confirmationResult.confirm(code).
-  //         window.confirmationResult = confirmationResult;
-  //         console.log("OTP has been sent")
-  //         // ...
-  //       }).catch((error) => {
-  //         // Error; SMS not sent
-  //         // ...
-  //         console.log("SMS not sent")
-  //       });
-      
-  // };
-  // configureCaptcha = () =>{
+  // const configureCaptcha = () => {
   //   window.recaptchaVerifier = new app.auth.RecaptchaVerifier('sign-in-button', {
   //     'size': 'invisible',
   //     'callback': (response) => {
   //       // reCAPTCHA solved, allow signInWithPhoneNumber.
-  //       this.onSignInSubmit();
-  //       console.log("Recaptca varified")
+  //       this.state.onSignInSubmit();
+  //       console.log("Recaptcha verified");
   //     },
   //     defaultCountry: "IN"
   //   });
-  // }
+  // };
+
+  // const handleSendCode = async (e) => {
+  //   e.preventDefault();
+  //   configureCaptcha();
+  //   const phoneNum = "+91" + phoneNumber;
+  //   console.log(phoneNum);
+  //   const appVerifier = window.recaptchaVerifier;
+  //   app.auth().signInWithPhoneNumber(phoneNum, appVerifier)
+  //     .then((confirmationResult) => {
+  //       // SMS sent. Prompt user to type the code from the message, then sign the
+  //       // user in with confirmationResult.confirm(code).
+  //       window.confirmationResult = confirmationResult;
+  //       console.log("OTP has been sent");
+  //     }).catch((error) => {
+  //       // Error; SMS not sent
+  //       console.log("SMS not sent", error);
+  //     });
+  // };
+
   // const handleVerifyCode = async (e) => {
-  //   e.preventDefault()
-  //   const code = this.state.otp
-  //   console.log(code)
+  //   e.preventDefault();
+  //   const code = this.state.otp;
+  //   console.log(code);
   //   window.confirmationResult.confirm(code).then((result) => {
   //     // User signed in successfully.
   //     const user = result.user;
-  //     console.log(JSON.stringify(user))
-  //     alert("User is verified")
-  //     // ...
+  //     console.log(JSON.stringify(user));
+  //     alert("User is verified");
   //   }).catch((error) => {
   //     // User couldn't sign in (bad verification code?)
-  //     // ...
+  //     console.log("Verification failed", error);
   //   });
   // };
-  const [hasFilled, setHasFilled] = useState(false);
 
-  const generateRecaptcha = () => {
-    window.recaptchaVerifier = new RecaptchaVerifier('recaptcha', {
-      'size': 'invisible',
-      'callback': (response) => {
-        // reCAPTCHA solved, allow signInWithPhoneNumber.
-        // ...
-      }
-    }, auth);
-  }
 
-  const handleSendCode = (event) => {
-    event.preventDefault();
-    setHasFilled(true);
-    generateRecaptcha();
-    let appVerifier = window.recaptchaVerifier;
-    signInWithPhoneNumber(auth, phoneNumber, appVerifier)
-      .then((confirmationResult) => {
-        // SMS sent. Prompt user to type the code from the message, then sign the
-        // user in with confirmationResult.confirm(code).
-        window.confirmationResult = confirmationResult;
-      }).catch((error) => {
-        // Error; SMS not sent
-        console.log(error);
-      });
-  }
+  // const handleSendCode = (event) => {
+  //   event.preventDefault();
+  //   setHasFilled(true);
+  //   generateRecaptcha();
+  //   let appVerifier = window.recaptchaVerifier;
+  //   signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+  //     .then((confirmationResult) => {
+  //       // SMS sent. Prompt user to type the code from the message, then sign the
+  //       // user in with confirmationResult.confirm(code).
+  //       window.confirmationResult = confirmationResult;
+  //     }).catch((error) => {
+  //       // Error; SMS not sent
+  //       console.log(error);
+  //     });
+  // }
   
-  const handleVerifyCode = (event) => {
-    let otp = verificationCode;
+  // const handleVerifyCode = (event) => {
+  //   let otp = verificationCode;
     
 
-    if (otp.length === 6) {
-      // verifu otp
-      let confirmationResult = window.confirmationResult;
-      confirmationResult.confirm(otp).then((result) => {
-        // User signed in successfully.
-        let user = result.user;
-        console.log(user);
-        alert('User signed in successfully');
-        // ...
-      }).catch((error) => {
-        // User couldn't sign in (bad verification code?)
-        // ...
-        alert('User couldn\'t sign in (bad verification code?)');
-      });
-    }
-  }
+  //   if (otp.length === 6) {
+  //     // verifu otp
+  //     let confirmationResult = window.confirmationResult;
+  //     confirmationResult.confirm(otp).then((result) => {
+  //       // User signed in successfully.
+  //       let user = result.user;
+  //       console.log(user);
+  //       alert('User signed in successfully');
+  //       // ...
+  //     }).catch((error) => {
+  //       // User couldn't sign in (bad verification code?)
+  //       // ...
+  //       alert('User couldn\'t sign in (bad verification code?)');
+  //     });
+  //   }
+  // }
   return (
     <div className="min-h-screen w-full">
       {currentUser.isReq ? (
@@ -342,14 +384,14 @@ export default function Contributors() {
                         placeholder="XXXXXXXXXX" // Placeholder with country code
                         required
                       />
-                      {/* <div className="mb-2">
-                        <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded" onClick={handleSendCode}>
+                      <div className="mb-2">
+                        <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded sign-in-button" onClick={handleSendCode}>
                           Send OTP
                         </button>
-                      </div> */}
+                      </div>
                     </div>
                   </div>
-                  {/* <div className="mb-2">
+                  <div className="mb-2">
                     <label>
                       Enter code:<span className="text-red-500 ml-1">*</span>
                     </label>
@@ -370,7 +412,7 @@ export default function Contributors() {
                       </div>
                     </div>
                     {error && <div className="text-red-500">{error}</div>}
-                  </div> */}
+                  </div>
 
 
 
