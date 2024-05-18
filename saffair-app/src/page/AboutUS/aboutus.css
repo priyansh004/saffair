@@ -1,0 +1,162 @@
+.about-us-container {
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* margin-top: 40px; */
+    border-radius: 20px;
+    font-family: sans-serif;
+    /* padding: 40px 25px; */
+    color: black;
+    /* width: 100%; */
+    margin: 80px auto;
+  max-width: 75%;
+    
+  }
+  
+  .about-title {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #2196BA;
+    /* margin-left: 60px; */
+}
+
+
+
+.about-content {
+    font-size: 1rem;
+    margin-top: 20px;
+    width: 95%;
+}
+
+.about-description {
+    font-size: 1.3rem;
+    /* margin-left: 60px; */
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.thanks-message {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 30px;
+}
+
+.great-day-message {
+    color: #2196ba;
+    font-weight: bold;
+    text-align: center;
+    font-size: 2rem;
+  }
+  
+  .separator {
+    border-bottom: solid 2px black;
+    width: 100%;
+    margin-top: 20px;
+  }
+  .vnms {
+    display: flex;
+    width: 95%;
+    justify-content: space-around;
+    /* margin: 20px 40px; */
+    margin: auto;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    /* border: 1px solid #2196ba; */
+  }
+  
+  .visions,
+  .missions {
+    width: 450px;
+    border: 2px solid ;
+    border-radius: 15px;
+    padding: 5px;
+  }
+  
+  .hh1s {
+    color: #2196ba;
+    font-size: 30px;
+    font-weight: bold;
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  
+  .vgoals,.mgoals {
+    font-size: 17px;
+    font-family: sans-serif;
+    text-align: center;
+    padding-bottom: 10px;
+  }
+ 
+  
+  @media (max-width: 1300px) {
+    .visions,
+    .missions {
+      width: 360px;
+    }
+  
+   
+    .about-us-container{
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .about-description{
+        margin-left: 0;
+    }
+    .about-content{
+        width: 100%;
+    }
+  }
+  
+  @media (max-width: 1100px) {
+    .visions,
+    .missions {
+      width: 350px;
+    }
+  
+   
+  }
+  
+  @media (max-width: 900px) {
+   
+  }
+  
+  @media (max-width: 800px) {
+    
+    .vnms {
+      flex-direction: column;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+      border: none;
+    }
+  
+    .mgoals,.vgoals {
+      text-align: center;
+    }
+   
+    .visions,
+    .missions {
+      width: 90%;
+      margin-bottom: 15px;
+    }
+  }
+  @media (max-width: 400px) {
+   .about-description{
+    font-size: 1rem;
+   }
+   .about-title{
+    font-size: 1.2rem;
+   }
+   .thanks-message{
+    font-size: 1.2rem;
+   }
+   .great-day-message{
+    font-size: 1.2rem;
+   }
+    }
+  
