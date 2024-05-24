@@ -3,7 +3,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import {
   getDownloadURL,
-  getStorage,
+  getStorage, 
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
@@ -13,6 +13,11 @@ import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { formatDate } from "date-fns";
+import { Viewer, Worker } from '@react-pdf-viewer/core';
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import '@react-pdf-viewer/default-layout/lib/styles/index.css';
+import PDFPreview from './PDFPreview';
 
 export default function CreatePost() {
   const [file, setFile] = useState(null);
@@ -26,13 +31,27 @@ export default function CreatePost() {
     options: ["", "", ""],
     correctAnswer: "",
   });
+
   const [documentUploadError, setDocumentUploadError] = useState(null);
   const [documentUploadProgress, setDocumentUploadProgress] = useState(null);
   const [documentDownloadURL, setDocumentDownloadURL] = useState(null);
   const navigate = useNavigate();
-
+  const handleImageORDocument = async ()=>{
+      if(!file)
+        {
+          setImageUploadError("Please select a File");
+        }
+      else if(file.type === "image/jpeg" || file.type === "image/png" )
+        {
+            await handleUpdloadImage();
+        }else
+        {
+            await handleUploadDocument();
+        }
+  }
   const handleUpdloadImage = async () => {
     try {
+      console.log("file = ",file)
       if (!file) {
         setImageUploadError("Please select an image");
         return;
@@ -62,7 +81,8 @@ export default function CreatePost() {
         }
       );
     } catch (error) {
-      setImageUploadError("Image upload failed");
+      console.log("object");
+      setImageUploadError("Image upload failed.....");
       setImageUploadProgress(null);
       console.log(error);
     }
@@ -125,12 +145,14 @@ export default function CreatePost() {
     setFile(selectedFile);
   };
 
-  const handleUploadDocument = async () => {
+  const handleUploadDocument =  () => {
     try {
+      // console.log(file)
       if (!file) {
         setDocumentUploadError("Please select a document");
         return;
       }
+      
       setDocumentUploadError(null);
 
       // Get reference to Firebase Storage
@@ -143,8 +165,12 @@ export default function CreatePost() {
       const storageRef = ref(storage, fileName);
 
       // Upload the file
-      const uploadTask = uploadBytesResumable(storageRef, file);
+  //  const metadata = {
+  //           contentType: file.mimetype,
+  //       };
 
+      const uploadTask = uploadBytesResumable(storageRef,  file);
+      
       // Track upload progress
       uploadTask.on(
         "state_changed",
@@ -160,17 +186,17 @@ export default function CreatePost() {
           // Once upload is complete, get the download URL
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             setDocumentUploadProgress(null);
-            setDocumentUploadError(null);
-
+            // setDocumentUploadError("Document upload successfully");
             // Set the download URL in the state
             setDocumentDownloadURL(downloadURL);
           });
         }
       );
     } catch (error) {
+      console.log("object")
       setDocumentUploadError("Document upload failed");
       setDocumentUploadProgress(null);
-      console.error(error);
+      console.error('=>>>> ',error);
     }
   };
 
@@ -203,6 +229,19 @@ export default function CreatePost() {
       console.log("Other selection");
     }
   };
+  const PDFViewer = ({ pdfUrl }) => {
+    return (
+      <div className="w-full h-72 object-cover">
+        <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.7.570/build/pdf.worker.min.js">
+          <Viewer
+            fileUrl={pdfUrl}
+            defaultScale={1.5}
+          />
+        </Worker>
+      </div>
+    );
+  };
+  
   const [cselectedOption, csetSelectedOption] = useState("Blog");
 
   return (
@@ -217,6 +256,7 @@ onChange={(e) =>
   setFormData({ ...formData, readingType: e.target.value })
 }
 >
+
 <option value="Blog">Blog</option>
 <option value="News">News</option>
 <option value="Update">Update</option>
@@ -269,7 +309,8 @@ onChange={(e) =>
               <div className="my-1 flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
                 <FileInput
                   type="file"
-                  accept="image/*"
+                  
+                  accept="pdf/*"
                   onChange={(e) => setFile(e.target.files[0])}
                 />
                 <Button
@@ -345,6 +386,7 @@ onChange={(e) =>
                 <FileInput
                   type="file"
                   accept="*/*"
+                  // accept="application/pdf,image/jpeg,image/png,image/x-eps"
                   onChange={(e) => setFile(e.target.files[0])}
                 />
                 <Button
@@ -352,14 +394,14 @@ onChange={(e) =>
                   gradientDuoTone="cyanToBlue"
                   size="sm"
                   outline
-                  onClick={handleUpdloadImage}
-                  disabled={imageUploadProgress}
+                  onClick={handleImageORDocument}
+                  disabled={documentUploadProgress || imageUploadProgress}
                 >
-                  {imageUploadProgress ? (
+                  {(documentUploadProgress || imageUploadProgress) ? (
                     <div className="w-16 h-16">
                       <CircularProgressbar
-                        value={imageUploadProgress}
-                        text={`${imageUploadProgress || 0}%`}
+                        value={documentUploadProgress || imageUploadProgress}
+                        text={`${(documentUploadProgress || imageUploadProgress) || 0}%`}
                       />
                     </div>
                   ) : (
@@ -368,14 +410,30 @@ onChange={(e) =>
                 </Button>
               </div>
             )}
-            {imageUploadError && <Alert color="failure">{imageUploadError}</Alert>}
-            {formData.image && (
+
+            {(documentUploadError || imageUploadError) &&  <Alert color="failure">{(documentUploadError || imageUploadError)}</Alert>}
+            {/* {(formData.pdf || formData.image) && (
               <img
-                src={formData.image}
+                src={formData.pdf || formData.image}
                 alt="upload"
                 className="w-full h-72 object-cover"
               />
-            )}
+            )} */}
+            {
+              (formData.image) ? <img
+                src={formData.pdf || formData.image}
+                alt="upload"
+                className="w-full h-72 object-cover"
+              /> :<>
+              {/* {documentDownloadURL && (
+                <PDFPreview pdfPath={documentDownloadURL} />
+              )} */}
+              {
+                documentDownloadURL
+              }
+            </>
+    
+            }
           </div>
         )}
 
