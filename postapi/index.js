@@ -12,6 +12,7 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const verifyToken = require("./utils/verifyUser");
+const voucher =require("./routes/voucher.routes.js");
 
 // MIDDLLWARE
 dotenv.config();
@@ -25,6 +26,7 @@ async function connectDB() {
   try {
     await mongoose.connect(process.env.MONGO_URL);
     console.log("mongodb connected successfully!");
+    
   } catch (err) {
     console.error("unable to connect mongodb!", err);
   }
@@ -43,6 +45,8 @@ app.use("/api/auth", usersAuth);
 app.use("/api/user", usersUpdate);
 app.use("/api/comment", userComment);
 app.use("/api/events", eventRoute);
+app.use("/api/vouchers",voucher)
+
 // app.use("/api/news", news);
 
 //API FOR CREATING POST

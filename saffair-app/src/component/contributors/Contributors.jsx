@@ -342,11 +342,11 @@ export default function Contributors() {
                         placeholder="XXXXXXXXXX" // Placeholder with country code
                         required
                       />
-                      {/* <div className="mb-2">
+                      { <div className="mb-2">
                         <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded" onClick={handleSendCode}>
                           Send OTP
                         </button>
-                      </div> */}
+                      </div> }
                     </div>
                   </div>
                   {/* <div className="mb-2">

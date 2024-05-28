@@ -17,6 +17,8 @@ import ConDashboardComp from "../../component/condashboardcom/ConDashboardComp";
 import DashBookMark from "../../component/DashBookMark/DashBookMark";
 import PostRequest from "../../component/PostRequest/PostRequest";
 import DashEventEntrys from "../../component/DashEventEntrys/DashEventEntrys";
+import CreateVoucherForm from "../../component/dashVoucherForm/CreateVoucherForm";
+import VoucherList from "../../component/dashshowvoucher/Dashshowvoucher";
 export default function Dashboard() {
   const location = useLocation();
   const [tab, setTab] = useState("");
@@ -49,6 +51,8 @@ export default function Dashboard() {
           {tab === "dashbookmark" && <DashBookMark />}
           {tab === "postrequest" && <PostRequest />}
           {tab === "evententry" && <DashEventEntrys />}
+          {tab === "createvoucherform" && <CreateVoucherForm/>}
+          {tab === "voucherlist" && <VoucherList/>}
         </div>
       </div>
     </div>
