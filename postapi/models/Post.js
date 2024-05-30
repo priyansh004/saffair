@@ -56,11 +56,10 @@ const PostSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    bookmarks: [
-      {
-        type: String,
-      },
-    ],
+    bookmark: {
+      type: Boolean,
+      default: false,
+    },
     quizQuestion: {
       type: String,
     },
@@ -70,6 +69,7 @@ const PostSchema = new Schema(
     correctAnswer: {
       type: String,
     },
+    
   },
   { timestamps: true }
 );

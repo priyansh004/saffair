@@ -20,7 +20,6 @@ import {
   signoutSuccess,
 } from "../../redux/user/userSlice";
 import { getAuth, signInWithPhoneNumber, confirmOTP, RecaptchaVerifier, updatePhoneNumber, RecaptchaVerifier_Instance, signInWithEmailAndPassword } from "firebase/auth";
-import PhoneInput from "react-phone-input-2";
 import { app } from "../../firebase.js"
 
 
@@ -406,38 +405,35 @@ export default function Contributors() {
                   </div> */}
                   <div>
                     <label>
-                      City<span className="text-red-500 ml-1">*</span>
+                      City
                     </label>
                     <TextInput
                       type="text"
                       placeholder="City"
                       id="city"
                       onChange={handleChange}
-                      required
                     />
                   </div>
                   <div>
                     <label>
-                      State<span className="text-red-500 ml-1">*</span>
+                      State
                     </label>
                     <TextInput
                       type="text"
                       placeholder="State"
                       id="state"
                       onChange={handleChange}
-                      required
                     />
                   </div>
                   <div>
                     <label>
-                      Pincode<span className="text-red-500 ml-1">*</span>
+                      Pincode
                     </label>
                     <TextInput
                       type="text"
                       placeholder="Pincode"
                       id="pincode"
                       onChange={handleChange}
-                      required
                     />
                   </div>
                 </div>
@@ -445,7 +441,7 @@ export default function Contributors() {
                 <div className="bio mb-3 grid sm:grid-cols-2">
                   <div>
                     <label>
-                      Bio<span className="text-red-500 ml-1">*</span>
+                      Bio
                     </label>
                     <br />
                     <Textarea
@@ -455,7 +451,6 @@ export default function Contributors() {
                       value={bio}
                       // onChange={handleChange}
                       onChange={(e) => setBio(e.target.value)}
-                      required
                     />
                     <p className="text-gray-500 text-xs">
                       {200 - bio.length} characters remaining
@@ -526,10 +521,10 @@ export default function Contributors() {
                     </div>
                   </div>
 
-                  <ToggleSwitch
-                    className="mb-1"
+                  <ToggleSwitch 
+                    className="my-3"
                     checked={showEducationWork}
-                    label="Job Alert"
+                    label="add education and work"
                     onChange={() => setShowEducationWork(!showEducationWork)}
                   />
                 </div>
@@ -630,7 +625,7 @@ export default function Contributors() {
                       <div className="grid grid-cols-1 mb-3 md:flex sm:grid-cols-2 gap-5 ">
                         <div>
                           <label>
-                            Start Date
+                            Start Month
                             <span className="text-red-500 ml-1">*</span>
                           </label>
                           <TextInput
@@ -642,7 +637,7 @@ export default function Contributors() {
                         </div>
                         <div>
                           <label>
-                            End Date<span className="text-red-500 ml-1">*</span>
+                            End Month<span className="text-red-500 ml-1">*</span>
                           </label>
                           <TextInput
                             type="month"
@@ -775,7 +770,7 @@ export default function Contributors() {
                       <div className="grid grid-cols-1 mb-3 md:flex sm:grid-cols-2 gap-5 ">
                         <div>
                           <label>
-                            Joining Date
+                            Joining Month
                             <span className="text-red-500 ml-1">*</span>
                           </label>
                           <TextInput
@@ -785,9 +780,9 @@ export default function Contributors() {
                             required
                           />
                         </div>
-                        <div>
+                      <div>
                           <label>
-                            End Date<span className="text-red-500 ml-1">*</span>
+                            End Month<span className="text-red-500 ml-1">*</span>
                           </label>
                           <TextInput
                             type="month"

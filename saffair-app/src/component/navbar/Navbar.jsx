@@ -36,7 +36,10 @@ export default function Navbar({ _id }) {
   const [posts, setPosts] = useState([])
   const [isTitleClicked, setIsTitleClicked] = useState(false)
   const [coin, setCoin] = useState('')
-
+  const handleClick = (link) => {
+    setActiveLink(link);
+    scrollToTop();
+  };
   // const handleTitleClick = () => {
   //   setIsTitleClicked(!isTitleClicked); // Set the state to true when a title is clicked
   // };
@@ -129,6 +132,8 @@ export default function Navbar({ _id }) {
       behavior: 'smooth',
     })
   }
+  const [activeLink, setActiveLink] = useState('');
+
   return (
     <div
       // className={`navbarContainer fixed top-0 ${isScrolled ? "scrolled" : ""}`}
@@ -142,60 +147,71 @@ export default function Navbar({ _id }) {
             alt="logo"
           />
         </div>
-        <div className="centerItems">
+        <div className="flex justify-center items-center space-x-4">
           <Link to="/" className="links">
-            <a className="centerItem" onClick={scrollToTop}>
+            <a
+              className={`centerItem ${activeLink === 'home' ? 'active' : ''}`}
+              onClick={() => handleClick('home')}
+            >
               Home
             </a>
           </Link>
-          <a className="centerItem" onClick={scrollToTop}>
+          <a
+            className={`centerItem ${activeLink === 'calculator' ? 'active' : ''}`}
+            onClick={() => handleClick('calculator')}
+          >
             Calculator
           </a>
+
+
           <div className="centerItem lg:flex items-center gap-4">
             <Dropdown
               label="Readings"
-              size="2xl"
+              size="3xl"
               color="black"
               fontSize="15px"
               arrowIcon={false}
             >
               <Link to="/blog" className="links">
-                {' '}
                 <Dropdown.Item>Blogs</Dropdown.Item>
               </Link>
               <Link to="/news" className="links">
                 <Dropdown.Item>News</Dropdown.Item>
               </Link>
-              <Link to="/Update" className="links">
+              <Link to="/update" className="links">
                 <Dropdown.Item>Updates</Dropdown.Item>
               </Link>
             </Dropdown>
-            <Link to="/events">
-              <a className="centerItem" onClick={scrollToTop}>
+            
+            
+
+          </div>
+          <Link to="/events">
+              <a
+                className={`centerItem ${activeLink === 'campaigns' ? 'active' : ''}`}
+                onClick={() => handleClick('campaigns')}
+              >
                 Campaigns
               </a>
             </Link>
-          </div>
-          {/* <Link to="/readings">
-            <a className="centerItem" onClick={scrollToTop}>
-              Readings
-            </a>
-          </Link> */}
           <Link to="/aboutus">
-            <a className="centerItem" onClick={scrollToTop}>
+            <a
+              className={`centerItem ${activeLink === 'aboutus' ? 'active' : ''}`}
+              onClick={() => handleClick('aboutus')}
+            >
               About Us
             </a>
           </Link>
           <Link to="/contactus">
-            <a className="centerItem" onClick={scrollToTop}>
+            <a
+              className={`centerItem ${activeLink === 'contactus' ? 'active' : ''}`}
+              onClick={() => handleClick('contactus')}
+            >
               Contact Us
             </a>
           </Link>
-
-          {/* <Link to="/privacypolicy">
-            <a className="centerItem">Privacy Policy</a>
-          </Link> */}
         </div>
+
       </div>
       <div className="rightNevbar">
         {/* <Button

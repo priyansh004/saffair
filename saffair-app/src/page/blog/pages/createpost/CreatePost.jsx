@@ -3,7 +3,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import {
   getDownloadURL,
-  getStorage, 
+  getStorage,
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
@@ -36,22 +36,19 @@ export default function CreatePost() {
   const [documentUploadProgress, setDocumentUploadProgress] = useState(null);
   const [documentDownloadURL, setDocumentDownloadURL] = useState(null);
   const navigate = useNavigate();
-  const handleImageORDocument = async ()=>{
-      if(!file)
-        {
-          setImageUploadError("Please select a File");
-        }
-      else if(file.type === "image/jpeg" || file.type === "image/png" )
-        {
-            await handleUpdloadImage();
-        }else
-        {
-            await handleUploadDocument();
-        }
+  const handleImageORDocument = async () => {
+    if (!file) {
+      setImageUploadError("Please select a File");
+    }
+    else if (file.type === "image/jpeg" || file.type === "image/png") {
+      await handleUpdloadImage();
+    } else {
+      await handleUploadDocument();
+    }
   }
   const handleUpdloadImage = async () => {
     try {
-      console.log("file = ",file)
+      console.log("file = ", file)
       if (!file) {
         setImageUploadError("Please select an image");
         return;
@@ -145,14 +142,14 @@ export default function CreatePost() {
     setFile(selectedFile);
   };
 
-  const handleUploadDocument =  () => {
+  const handleUploadDocument = () => {
     try {
       // console.log(file)
       if (!file) {
         setDocumentUploadError("Please select a document");
         return;
       }
-      
+
       setDocumentUploadError(null);
 
       // Get reference to Firebase Storage
@@ -165,12 +162,12 @@ export default function CreatePost() {
       const storageRef = ref(storage, fileName);
 
       // Upload the file
-  //  const metadata = {
-  //           contentType: file.mimetype,
-  //       };
+      //  const metadata = {
+      //           contentType: file.mimetype,
+      //       };
 
-      const uploadTask = uploadBytesResumable(storageRef,  file);
-      
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
       // Track upload progress
       uploadTask.on(
         "state_changed",
@@ -196,7 +193,7 @@ export default function CreatePost() {
       console.log("object")
       setDocumentUploadError("Document upload failed");
       setDocumentUploadProgress(null);
-      console.error('=>>>> ',error);
+      console.error('=>>>> ', error);
     }
   };
 
@@ -241,7 +238,7 @@ export default function CreatePost() {
       </div>
     );
   };
-  
+
   const [cselectedOption, csetSelectedOption] = useState("Blog");
 
   return (
@@ -250,25 +247,7 @@ export default function CreatePost() {
         Create A Readings
       </h1>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-      <Select
-
-onChange={(e) =>
-  setFormData({ ...formData, readingType: e.target.value })
-}
->
-
-<option value="Blog">Blog</option>
-<option value="News">News</option>
-<option value="Update">Update</option>
-<option value="legal">Legal Updates</option>
-<option value="Blog">innovation</option>
-<option value="community">get your voice bigger with community</option>
-<option value="Blog">suggest a reforms</option>
-<option value="campaign">join our campaigns</option>
-<option value="Blog">Donate/Sponser</option>
-<option value="Blog">Get outdoor Air Analyzer</option>
-<option value="support">Need Community Support/Suggestions/Survey</option>
-</Select>
+        
         {currentUser.isAdmin && (
           <Select
 
@@ -309,7 +288,7 @@ onChange={(e) =>
               <div className="my-1 flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
                 <FileInput
                   type="file"
-                  
+
                   accept="pdf/*"
                   onChange={(e) => setFile(e.target.files[0])}
                 />
@@ -411,7 +390,7 @@ onChange={(e) =>
               </div>
             )}
 
-            {(documentUploadError || imageUploadError) &&  <Alert color="failure">{(documentUploadError || imageUploadError)}</Alert>}
+            {(documentUploadError || imageUploadError) && <Alert color="failure">{(documentUploadError || imageUploadError)}</Alert>}
             {/* {(formData.pdf || formData.image) && (
               <img
                 src={formData.pdf || formData.image}
@@ -424,15 +403,15 @@ onChange={(e) =>
                 src={formData.pdf || formData.image}
                 alt="upload"
                 className="w-full h-72 object-cover"
-              /> :<>
-              {/* {documentDownloadURL && (
+              /> : <>
+                {/* {documentDownloadURL && (
                 <PDFPreview pdfPath={documentDownloadURL} />
               )} */}
-              {
-                documentDownloadURL
-              }
-            </>
-    
+                {
+                  documentDownloadURL
+                }
+              </>
+
             }
           </div>
         )}
@@ -443,7 +422,7 @@ onChange={(e) =>
 
 
 
-        
+
         <ReactQuill
           theme="snow"
           placeholder="Write something..."
@@ -454,11 +433,12 @@ onChange={(e) =>
           }}
         />
 
-        {/* <div>
+        {currentUser.isAdmin ? (
+          <div>
           <h2>Create Quiz</h2>
           <TextInput
             type="text"
-            placeholder="Quiz Question"
+            placeholder="Quiz heading"
             name="question"
             value={quizData.question}
             onChange={handleQuizChange}
@@ -483,7 +463,11 @@ onChange={(e) =>
             className="mb-2"
           />
           <Button onClick={handleQuizSubmit}>Add Quiz</Button>
-        </div> */}
+        </div>
+        ):(
+          <div></div>
+        )}
+        
         {currentUser.isAdmin ? (
           <Button type="submit" gradientDuoTone="cyanToBlue">
             Publish

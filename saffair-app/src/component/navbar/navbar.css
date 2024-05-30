@@ -12,6 +12,33 @@
   /* background-color: rgba(255, 255, 255); */
   z-index: 15;
 }
+.centerItem {
+  @apply px-4 py-2 rounded-md relative transition duration-200 ease-in-out;
+}
+
+.centerItem::after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 2px;
+  background: #1ec2f4;
+  transition: width 0.3s;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.centerItem:hover::after {
+  width: 100%;
+}
+
+.active {
+  @apply bg-[#1ec2f4] text-white;
+}
+
+.active::after {
+  width: 100%;
+}
 
 .navbarContainer {
   transition: background-color 0.1s ease;
