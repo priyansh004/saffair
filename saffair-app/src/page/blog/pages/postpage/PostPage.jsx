@@ -15,15 +15,18 @@ import { useSelector } from "react-redux";
 import Qna from "../../../../component/QnA/Qna";
 import Ratings from "../../../../component/Ratings/Ratings";
 import "./../../component/homepageComponent/weatherupdates/weatherupdate.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBookmark, faBookmarkFill } from '@fortawesome/free-solid-svg-icons';
 
 //vvvvvvvvvv
 export default function PostPage() {
-  // const { currentUser } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user);
   const [postInfo, setPostInfo] = useState(null);
   // const [postAdmin, setPostAdmin] = useState(null);
   const [posts, setPosts] = useState([]);
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
+  const [isBookmarked, setIsBookmarked] = useState("false");
 
   useEffect(() => {
     // Fetch posts from the server
@@ -72,6 +75,26 @@ export default function PostPage() {
       });
   }, [id]);
 
+  const handleBookmarkToggle = async () => {
+    try {
+      const response = await fetch(`http://localhost:6600/bookmark/${id}`, {
+        method: isBookmarked ? "DELETE" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: currentUser._id }),
+      });
+
+      if (response.ok) {
+        setIsBookmarked(!isBookmarked); // Toggle bookmark status locally if the request is successful
+      } else {
+        console.error("Failed to toggle bookmark status");
+      }
+    } catch (error) {
+      console.error("Error toggling bookmark:", error);
+    }
+  };
+
   if (!postInfo) return null;
   document.querySelectorAll(".feedback li").forEach((entry) =>
     entry.addEventListener("click", (e) => {
@@ -84,6 +107,8 @@ export default function PostPage() {
       e.preventDefault();
     })
   );
+
+
   return (
     <>
       <div style={{ Height: "800px" }}>
@@ -129,6 +154,9 @@ export default function PostPage() {
                     </div>
                   </div>
                 </div>
+
+
+
                 <div className="postDataCon">
                   <div
                     className="post-content"
@@ -136,6 +164,12 @@ export default function PostPage() {
                   />
                   {/* {postInfo.content} */}
                 </div>
+{/* 
+                <button onClick={handleBookmarkToggle}>
+                  <FontAwesomeIcon className="ic" icon={isBookmarked ? faBookmark :  faBookmark} />
+                  <span>{isBookmarked ? "Bookmarked" : "Bookmark"}</span>
+                </button> */}
+
 
                 <div className="authInfo">
                   <AdminInfo userId={postInfo.userId} />

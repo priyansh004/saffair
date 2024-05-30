@@ -8,7 +8,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../../../../firebase";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useNavigate } from "react-router-dom";
@@ -19,23 +19,126 @@ import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import PDFPreview from './PDFPreview';
 
+
+
+
+
 export default function CreatePost() {
+
+
+  const [quizData, setQuizData] = useState({
+    question: "",
+    options: ["", "", "", ""],
+    correctAnswerIndex: null,
+  });
+
+
+  const handleOptionChange = (index, value) => {
+    const updatedOptions = [...quizData.options];
+    updatedOptions[index] = value;
+    setQuizData({
+      ...quizData,
+      options: updatedOptions,
+    });
+  };
+
+  const handleCorrectAnswerChange = (index) => {
+    setQuizData({
+      ...quizData,
+      correctAnswerIndex: index,
+    });
+  };
+  const handleAddQuiz = () => {
+    const updatedFormData = {
+      ...formData,
+      quiz: [
+        ...(formData.quiz || []),
+        {
+          quizQuestion: quizData.question,
+          quizOptions: quizData.options,
+          correctAnswer: quizData.options[quizData.correctAnswerIndex] || "",
+        },
+      ],
+    };
+    setFormData(updatedFormData);
+    console.log(updatedFormData);
+  };
+  // const handleOptionChange = (index, value) => {
+  //   const updatedOptions = [...quizData.options];
+  //   updatedOptions[index] = value;
+  //   setQuizData({
+  //     ...quizData,
+  //     options: updatedOptions,
+  //   });
+  // };
+
+  // const handleCorrectAnswerChange = (index) => {
+  //   setQuizData({
+  //     ...quizData,
+  //     correctAnswerIndex: index,
+  //   });
+  // };
+
+
+
   const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    tags: [],
+  });
   const [publishError, setPublishError] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
-  const [quizData, setQuizData] = useState({
-    question: "",
-    options: ["", "", ""],
-    correctAnswer: "",
-  });
+
 
   const [documentUploadError, setDocumentUploadError] = useState(null);
   const [documentUploadProgress, setDocumentUploadProgress] = useState(null);
   const [documentDownloadURL, setDocumentDownloadURL] = useState(null);
   const navigate = useNavigate();
+
+
+
+  const [tags, setTags] = useState([]);
+  const [newTag, setNewTag] = useState('');
+
+  const handleChange = (e) => {
+    setNewTag(e.target.value);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleTagAdd();
+    }
+  };
+
+  const handleTagAdd = () => {
+    if (newTag.trim() !== '' && tags.length < 3 && !tags.includes(newTag)) {
+      setTags([...tags, newTag]);
+      setNewTag('');
+      // Add the following line to update formData
+      setFormData({ ...formData, tags: [...tags, newTag] });
+    }
+  };
+
+  const handleTagRemove = (tagToRemove) => {
+    setTags(tags.filter(tag => tag !== tagToRemove));
+    // Add the following line to update formData
+    setFormData({ ...formData, tags: tags.filter(tag => tag !== tagToRemove) });
+  };
+
+
+  // const handleAddQuiz = () => {
+  //   setFormData({
+  //     ...formData,
+  //     quiz: [
+  //       ...(formData.quiz || []), // Existing quiz data
+  //       quizData, // New quiz data
+  //     ],
+  //   });
+  //   console.log(FormData.)
+  // };
+
   const handleImageORDocument = async () => {
     if (!file) {
       setImageUploadError("Please select a File");
@@ -73,7 +176,7 @@ export default function CreatePost() {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             setImageUploadProgress(null);
             setImageUploadError(null);
-            setFormData({ ...formData, image: downloadURL });
+            setFormData({ ...formData, image1: downloadURL });
           });
         }
       );
@@ -111,22 +214,22 @@ export default function CreatePost() {
     }
   };
 
-  const handleQuizChange = (e) => {
-    const { name, value } = e.target;
-    setQuizData({
-      ...quizData,
-      [name]: value,
-    });
-  };
+  // const handleQuizChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setQuizData({
+  //     ...quizData,
+  //     [name]: value,
+  //   });
+  // };
 
-  const handleOptionChange = (index, value) => {
-    const updatedOptions = [...quizData.options];
-    updatedOptions[index] = value;
-    setQuizData({
-      ...quizData,
-      options: updatedOptions,
-    });
-  };
+  // const handleOptionChange = (index, value) => {
+  //   const updatedOptions = [...quizData.options];
+  //   updatedOptions[index] = value;
+  //   setQuizData({
+  //     ...quizData,
+  //     options: updatedOptions,
+  //   });
+  // };
 
   const handleQuizSubmit = (e) => {
     e.preventDefault();
@@ -238,7 +341,6 @@ export default function CreatePost() {
       </div>
     );
   };
-
   const [cselectedOption, csetSelectedOption] = useState("Blog");
 
   return (
@@ -247,7 +349,7 @@ export default function CreatePost() {
         Create A Readings
       </h1>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-        
+
         {currentUser.isAdmin && (
           <Select
 
@@ -316,7 +418,7 @@ export default function CreatePost() {
               </div>
               {formData.image && (
                 <img
-                  src={formData.image}
+                  src={formData.image1}
                   alt="upload"
                   className="w-full h-72 object-cover"
                 />
@@ -400,7 +502,7 @@ export default function CreatePost() {
             )} */}
             {
               (formData.image) ? <img
-                src={formData.pdf || formData.image}
+                src={formData.pdf || formData.image1}
                 alt="upload"
                 className="w-full h-72 object-cover"
               /> : <>
@@ -433,41 +535,93 @@ export default function CreatePost() {
           }}
         />
 
-        {currentUser.isAdmin ? (
-          <div>
-          <h2>Create Quiz</h2>
-          <TextInput
-            type="text"
-            placeholder="Quiz heading"
-            name="question"
-            value={quizData.question}
-            onChange={handleQuizChange}
-            className="mb-2 mt-2"
-          />
-          {quizData.options.map((option, index) => (
-            <TextInput
-              key={index}
-              type="text"
-              placeholder={`Option ${index + 1}`}
-              value={option}
-              onChange={(e) => handleOptionChange(index, e.target.value)}
-              className="mb-2"
-            />
-          ))}
-          <TextInput
-            type="text"
-            placeholder="Correct Answer"
-            name="correctAnswer"
-            value={quizData.correctAnswer}
-            onChange={handleQuizChange}
-            className="mb-2"
-          />
-          <Button onClick={handleQuizSubmit}>Add Quiz</Button>
+        <div className="mb-4">
+          <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+            Category
+          </label>
+          <select
+            id="category"
+            name="category"
+            value={formData.category}
+            onChange={(e) =>
+              setFormData({ ...formData, category: e.target.value })
+            }
+            className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          >
+            <option value="uncategorized">Uncategorized</option>
+            <option value="blog">Blog</option>
+            <option value="news">News</option>
+            <option value="updates">Updates</option>
+          </select>
         </div>
-        ):(
+
+        <div className="flex flex-wrap items-center gap-2">
+          {tags.map((tag, index) => (
+            <div key={index} className="flex items-center bg-gray-200 rounded-full px-3 py-1">
+              <span>{tag}</span>
+              <button type="button" onClick={() => handleTagRemove(tag)} className="ml-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-600" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM6.707 6.707a1 1 0 00-1.414 1.414L8.586 10l-3.293 3.293a1 1 0 101.414 1.414L10 11.414l3.293 3.293a1 1 0 001.414-1.414L11.414 10l3.293-3.293a1 1 0 00-1.414-1.414L10 8.586 6.707 5.293z" clipRule="evenodd" />
+                </svg>
+              </button>
+            </div>
+          ))}
+          {tags.length < 3 && (
+            <div className="flex items-center bg-gray-200 rounded-full px-3 py-1">
+              <input
+                type="text"
+                value={newTag}
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
+                className="bg-transparent border-none focus:outline-none"
+                placeholder="Add tag"
+              />
+              <button type="button" onClick={handleTagAdd}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9V5a1 1 0 012 0v4h4a1 1 0 010 2h-4v4a1 1 0 01-2 0v-4H5a1 1 0 010-2h4z" clipRule="evenodd" />
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
+
+        {currentUser.isAdmin ? (
+
+          <div>
+            <label htmlFor="Qna" className="block text-sm font-medium text-gray-700">
+              QNA
+            </label>
+            <TextInput
+              type="text"
+              placeholder="Quiz heading"
+              value={quizData.question}
+              onChange={(e) => setQuizData({ ...quizData, question: e.target.value })}
+              className="mb-4 mt-2"
+            />
+            {quizData.options.map((option, index) => (
+              <div key={index} className="gap-5">
+                <TextInput
+                  type="text"
+                  placeholder={`Option ${index + 1}`}
+                  value={option}
+                  onChange={(e) => handleOptionChange(index, e.target.value)}
+                  className="m-3"
+                />
+                <input
+                  type="radio"
+                  name="correctAnswer"
+                  checked={quizData.correctAnswerIndex === index}
+                  onChange={() => handleCorrectAnswerChange(index)}
+                />
+                <label className="m-3">Correct Answer</label>
+              </div>
+            ))}
+            <Button onClick={handleAddQuiz} className="my-4">Add Quiz</Button>
+          </div>
+        ) : (
           <div></div>
         )}
-        
+
         {currentUser.isAdmin ? (
           <Button type="submit" gradientDuoTone="cyanToBlue">
             Publish

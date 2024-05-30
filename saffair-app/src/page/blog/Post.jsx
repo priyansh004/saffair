@@ -1,18 +1,43 @@
 import "./post.css";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
-import { useSelector } from "react-redux";
+import { useSelector , useDispatch} from "react-redux";
+import {useState} from 'react';
 
 export default function Post({
   _id,
   title,
   createdAt,
   image,
+  bookmark,
   content,
   category,
   slug,
 }) {
   const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  const [isBookmarked, setIsBookmarked] = useState(bookmark);
+
+  const handleBookmarkToggle = async () => {
+    try {
+      // Send a request to your backend API to toggle the bookmark status in the database
+      const response = await fetch(`/api/posts/${_id}/bookmark`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ bookmark: !isBookmarked }),
+      });
+      if (response.ok) {
+        setIsBookmarked(!isBookmarked); // Toggle bookmark status locally if the request is successful
+      } else {
+        console.error('Failed to toggle bookmark status');
+      }
+    } catch (error) {
+      console.error('Error toggling bookmark:', error);
+    }
+  };
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -21,6 +46,7 @@ export default function Post({
   };
   return (
     <>
+
       <div className="postContainer" onClick={scrollToTop}>
         <div className="card">
           <Link to={`/post/${_id}`}>
@@ -58,6 +84,8 @@ export default function Post({
                     <time>{format(new Date(createdAt), "MMMM dd, yyyy")}</time>
                   </small>
                 </div>
+                
+                
               </div>
             )}
           </div>

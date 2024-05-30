@@ -115,14 +115,19 @@ export default function EventPage() {
   };
 
   console.log(eventInfo);
+  const [selectedOption, setSelectedOption] = useState(null);
 
+  const handleButtonClick = (response) => {
+    console.log("User selected:", response);
+    setSelectedOption(response);
+  };
   return (
     <>
       <div className="mt-20" >
         {eventInfo ? (
           <
 
-          >
+            >
             <div className="flex justify-center text-3xl mb-4">Event name: {eventInfo.eventTitle}</div>
             <img src={eventInfo.eventImage} className="w-full h-screen object-cover" alt="eventImage" />
             <div
@@ -131,6 +136,38 @@ export default function EventPage() {
             />
 
             <div className="p-3 max-w-3xl mx-auto mt-8 min-h-screen">
+              <h1 className="text-center text-3xl my-7 font-semibold">
+                Are you willing to join?</h1>
+                <div className="flex justify-center mt-4 space-x-4">
+        <button
+          onClick={() => handleButtonClick("Yes")}
+          className={`${
+            selectedOption === "Yes"
+              ? "bg-green-800"
+              : "bg-green-200 hover:bg-green-600"
+          } text-white font-bold py-2 px-4 rounded transition duration-300`}
+        >
+          Yes
+        </button>
+        <button
+          onClick={() => handleButtonClick("No")}
+          className={`${
+            selectedOption === "No" ? "bg-red-800" : "bg-red-200 hover:bg-red-600"
+          } text-white font-bold py-2 px-4 rounded transition duration-300`}
+        >
+          No
+        </button>
+        <button
+          onClick={() => handleButtonClick("Maybe")}
+          className={`${
+            selectedOption === "Maybe"
+              ? "bg-blue-800"
+              : "bg-blue-200 hover:bg-blue-600"
+          } text-white font-bold py-2 px-4 rounded transition duration-300`}
+        >
+          Maybe
+        </button>
+      </div>
               <h1 className="text-center text-3xl my-7 font-semibold">
                 Let's Participate
               </h1>

@@ -1,5 +1,5 @@
 import { Alert, Button, Spinner, TextInput, Textarea } from "flowbite-react";
-import { useRef,useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,9 +20,15 @@ import {
   signoutSuccess,
 } from "../../redux/user/userSlice";
 import { getAuth, signInWithPhoneNumber, confirmOTP, RecaptchaVerifier, updatePhoneNumber, RecaptchaVerifier_Instance, signInWithEmailAndPassword } from "firebase/auth";
-import { app } from "../../firebase.js"
+import { app, auth } from "../../firebase.js"
+import { CircularProgressbar } from "react-circular-progressbar";
 
-
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
 const employmentTypes = [
   { value: "", label: "Select Employment Type" },
   { value: "Full-time", label: "Full-time" },
@@ -59,7 +65,7 @@ const gradeOptions = [
 
 export default function Contributors() {
   const auth = getAuth(app);
-  
+
   const {
     currentUser,
     loading,
@@ -76,12 +82,13 @@ export default function Contributors() {
   const [showForm, setShowForm] = useState(true);
   const [showAlert, setShowAlert] = useState(false);
   const [users, setUsers] = useState([]);
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [verificationCode, setVerificationCode] = useState("");
-  const [verificationId, setVerificationId] = useState("");
+  // const [phoneNumber, setPhoneNumber] = useState("");
+  // const [verificationCode, setVerificationCode] = useState("");
+  // const [verificationId, setVerificationId] = useState("");
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
   const recaptchaVerifier = useRef(null);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
@@ -117,6 +124,60 @@ export default function Contributors() {
     }
   }, [currentUser._id]);
 
+  const filePickerRef = useRef();
+
+  const [imageFile, setImageFile] = useState(null);
+  const [imageFileUrl, setImageFileUrl] = useState(null);
+  const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
+  const [imageFileUploadError, setImageFileUploadError] = useState(null);
+  const [imageFileUploading, setImageFileUploading] = useState(false);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImageFileUrl(URL.createObjectURL(file));
+    }
+  };
+  useEffect(() => {
+    if (imageFile) {
+      uploadImage();
+    }
+  }, [imageFile]);
+
+  const uploadImage = async () => {
+    setImageFileUploading(true);
+    setImageFileUploadError(null);
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + imageFile.name;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, imageFile);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+        setImageFileUploadProgress(progress.toFixed(0));
+      },
+      (error) => {
+        setImageFileUploadError(
+          "Could not upload image (File must be less than 2MB)"
+        );
+        setImageFileUploadProgress(null);
+        setImageFile(null);
+        setImageFileUrl(null);
+        setImageFileUploading(false);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setImageFileUrl(downloadURL);
+          setFormData({ ...formData, profilePicture: downloadURL });
+          setImageFileUploading(false);
+        });
+      }
+    );
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setShowAlert(false); // Hide any previous alert messages
@@ -187,7 +248,7 @@ export default function Contributors() {
   // console.log(formData);
   // const recaptchaContainerRef = React.createRef();
 
-  
+
 
   // const handleSendCode = async (e) => {
   //   e.preventDefault()
@@ -207,7 +268,7 @@ export default function Contributors() {
   //         // ...
   //         console.log("SMS not sent")
   //       });
-      
+
   // };
   // configureCaptcha = () =>{
   //   window.recaptchaVerifier = new app.auth.RecaptchaVerifier('sign-in-button', {
@@ -235,54 +296,92 @@ export default function Contributors() {
   //     // ...
   //   });
   // };
-  const [hasFilled, setHasFilled] = useState(false);
+  // const [hasFilled, setHasFilled] = useState(false);
 
-  const generateRecaptcha = () => {
-    window.recaptchaVerifier = new RecaptchaVerifier('recaptcha', {
-      'size': 'invisible',
-      'callback': (response) => {
-        // reCAPTCHA solved, allow signInWithPhoneNumber.
-        // ...
-      }
-    }, auth);
-  }
+  // const generateRecaptcha = () => {
+  //   window.recaptchaVerifier = new RecaptchaVerifier('recaptcha', {
+  //     'size': 'invisible',
+  //     'callback': (response) => {
+  //       // reCAPTCHA solved, allow signInWithPhoneNumber.
+  //       // ...
+  //     }
+  //   }, auth);
+  // }
 
-  const handleSendCode = (event) => {
-    event.preventDefault();
-    setHasFilled(true);
-    generateRecaptcha();
-    let appVerifier = window.recaptchaVerifier;
-    signInWithPhoneNumber(auth, phoneNumber, appVerifier)
-      .then((confirmationResult) => {
-        // SMS sent. Prompt user to type the code from the message, then sign the
-        // user in with confirmationResult.confirm(code).
-        window.confirmationResult = confirmationResult;
-      }).catch((error) => {
-        // Error; SMS not sent
-        console.log(error);
-      });
-  }
-  
-  const handleVerifyCode = (event) => {
-    let otp = verificationCode;
-    
+  // const handleSendCode = (event) => {
+  //   event.preventDefault();
+  //   setHasFilled(true);
+  //   generateRecaptcha();
+  //   let appVerifier = window.recaptchaVerifier;
+  //   signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+  //     .then((confirmationResult) => {
+  //       // SMS sent. Prompt user to type the code from the message, then sign the
+  //       // user in with confirmationResult.confirm(code).
+  //       window.confirmationResult = confirmationResult;
+  //     }).catch((error) => {
+  //       // Error; SMS not sent
+  //       console.log(error);
+  //     });
+  // }
 
-    if (otp.length === 6) {
-      // verifu otp
-      let confirmationResult = window.confirmationResult;
-      confirmationResult.confirm(otp).then((result) => {
-        // User signed in successfully.
-        let user = result.user;
-        console.log(user);
-        alert('User signed in successfully');
-        // ...
-      }).catch((error) => {
-        // User couldn't sign in (bad verification code?)
-        // ...
-        alert('User couldn\'t sign in (bad verification code?)');
-      });
+  // const handleVerifyCode = (event) => {
+  //   let otp = verificationCode;
+
+
+  //   if (otp.length === 6) {
+  //     // verifu otp
+  //     let confirmationResult = window.confirmationResult;
+  //     confirmationResult.confirm(otp).then((result) => {
+  //       // User signed in successfully.
+  //       let user = result.user;
+  //       console.log(user);
+  //       alert('User signed in successfully');
+  //       // ...
+  //     }).catch((error) => {
+  //       // User couldn't sign in (bad verification code?)
+  //       // ...
+  //       alert('User couldn\'t sign in (bad verification code?)');
+  //     });
+  //   }
+  // }
+
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+  const [verificationId, setVerificationId] = useState('');
+
+  const handleSendCode = async () => {
+    try {
+      const token = await window.grecaptcha.execute('6Lf1YewpAAAAAE27-KSrUi29qIPNHLXAkYLBItf4'); // Replace with your reCAPTCHA v3 site key
+      const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, token);
+      setVerificationId(confirmationResult.verificationId);
+      alert('Verification code sent to your phone.'); // Inform user
+    } catch (error) {
+      console.error('Error sending code:', error.message);
+      alert('There was an error sending the verification code. Please try again.'); // Inform user
     }
-  }
+  };
+
+  const handleVerifyCode = async () => {
+    try {
+      if (!verificationId) {
+        throw new Error('No verification ID available. Please request a code first.');
+      }
+
+      const credential = await signInWithPhoneNumber(auth, verificationId, verificationCode);
+      console.log('Successfully verified OTP:', credential.user);
+
+      // Handle successful verification (e.g., navigate to a different page)
+    } catch (error) {
+      console.error('Error verifying code:', error.message);
+      alert('Invalid verification code. Please try again.'); // Inform user
+    }
+  };
+
+  useEffect(() => {
+    // Optional: Handle reCAPTCHA v3 script loading (if not included globally)
+  }, []);
+
+
   return (
     <div className="min-h-screen w-full">
       {currentUser.isReq ? (
@@ -299,8 +398,103 @@ export default function Contributors() {
             >
               <div className="pdetails">
                 <p className="pdetailstag mb-4 font-bold">Personal details</p>
-                <div className="thenames grid grid-cols-1 mb-2 md:grid-cols-2 sm:grid-cols-2">
+                <label>
+                  Profile Picture
+                </label>
+                <div className=" thenames grid grid-cols-1 mb-2 md:grid-cols-2 sm:grid-cols-2">
+
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    ref={filePickerRef}
+                    hidden
+                  />
+                  <div
+                    className="relative  w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full"
+                    onClick={() => filePickerRef.current.click()}
+                  >
+                    {imageFileUploadProgress && (
+                      <CircularProgressbar
+                        value={imageFileUploadProgress || 0}
+                        text={`${imageFileUploadProgress}%`}
+                        strokeWidth={5}
+                        styles={{
+                          root: {
+                            width: "100%",
+                            height: "100%",
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                          },
+                          path: {
+                            stroke: `rgba(62, 152, 199, ${imageFileUploadProgress / 100
+                              })`,
+                          },
+                        }}
+                      />
+                    )}
+                    <img
+                      src={imageFileUrl || currentUser.profilePicture}
+                      alt="user"
+                      className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${imageFileUploadProgress &&
+                        imageFileUploadProgress < 100 &&
+                        "opacity-60"
+                        }`}
+                    />
+                  </div>
+                  {imageFileUploadError && (
+                    <Alert color="failure">{imageFileUploadError}</Alert>
+                  )}
+
+
+
+                  {/* <div>
+                    <h1>Phone Number Verification</h1>
+                    <input
+                      type="tel"
+                      placeholder="Enter phone number"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                    />
+                    <button onClick={handleSendCode}>Send Verification Code</button>
+                    {verificationId && (
+                      <>
+                        <input
+                          type="text"
+                          placeholder="Enter verification code"
+                          value={verificationCode}
+                          onChange={(e) => setVerificationCode(e.target.value)}
+                        />
+                        <button onClick={handleVerifyCode}>Verify Code</button>
+                      </>
+                    )}
+                  </div> */}
+                  <div className="mb-2">
+                    <label>
+                      Mobile Number<span className="text-red-500 ml-1">*</span>
+                    </label>
+                    <div className="flex flex-col gap-3  align-middle ">
+                      {/* <PhoneInput  showTitle={true} country={"in"} value={phoneNumber} onChange={phandleChange} /> */}
+
+                      <TextInput
+                        type="text"
+                        id="phone"
+                        value={phoneNumber}
+                        onChange={phandleChange}
+                        maxLength={10} // Maximum length including the country code
+                        placeholder="XXXXXXXXXX" // Placeholder with country code
+                        required
+                      />
+                      {<div className="mb-2">
+                        <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded" onClick={handleSendCode}>
+                          Send OTP
+                        </button>
+                      </div>}
+                    </div>
+                  </div>
                   <div>
+
                     <label>
                       First Name<span className="text-red-500 ml-1">*</span>
                     </label>
@@ -325,29 +519,7 @@ export default function Contributors() {
                     />
                   </div>
 
-                  <div className="mb-2">
-                    <label>
-                      Mobile Number<span className="text-red-500 ml-1">*</span>
-                    </label>
-                    <div className="flex flex-col gap-3  align-middle ">
-                      {/* <PhoneInput  showTitle={true} country={"in"} value={phoneNumber} onChange={phandleChange} /> */}
 
-                      <TextInput
-                        type="text"
-                        id="phone"
-                        value={phoneNumber}
-                        onChange={phandleChange}
-                        maxLength={10} // Maximum length including the country code
-                        placeholder="XXXXXXXXXX" // Placeholder with country code
-                        required
-                      />
-                      { <div className="mb-2">
-                        <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded" onClick={handleSendCode}>
-                          Send OTP
-                        </button>
-                      </div> }
-                    </div>
-                  </div>
                   {/* <div className="mb-2">
                     <label>
                       Enter code:<span className="text-red-500 ml-1">*</span>
@@ -521,7 +693,7 @@ export default function Contributors() {
                     </div>
                   </div>
 
-                  <ToggleSwitch 
+                  <ToggleSwitch
                     className="my-3"
                     checked={showEducationWork}
                     label="add education and work"
@@ -780,7 +952,7 @@ export default function Contributors() {
                             required
                           />
                         </div>
-                      <div>
+                        <div>
                           <label>
                             End Month<span className="text-red-500 ml-1">*</span>
                           </label>

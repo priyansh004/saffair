@@ -84,11 +84,11 @@ export default function Readings() {
               </Link>
             </Breadcrumb>
             <div className="blogtitle">
-            <Link to={"/blog"} className="link">
-  <h2 className="text-2xl font-bold headtag" >
-    Blogs
-  </h2>
-</Link>
+              <Link to={"/blog"} className="link">
+                <h2 className="text-2xl font-bold headtag" >
+                  Blogs
+                </h2>
+              </Link>
 
               <hr />
             </div>
@@ -100,24 +100,24 @@ export default function Readings() {
                 ))}
               </>
             </div>
-<div className="flex justify-center mt-2 ">           
-     <Link to={"/blog"}>
-            <p style={{color:'#2196ba'}}>
-              See more
-            </p></Link>
+            <div className="flex justify-center mt-2 ">
+              <Link to={"/blog"}>
+                <p style={{ color: '#2196ba' }}>
+                  See more
+                </p></Link>
             </div>
 
             <div className="blogtitle">
-            <Link to={"/news"} className="link">
-  <h2 className="text-2xl font-bold headtag" >
-    News
-  </h2>
-</Link>
+              <Link to={"/news"} className="link">
+                <h2 className="text-2xl font-bold headtag" >
+                  News
+                </h2>
+              </Link>
 
 
               <hr />
             </div>
-            
+
             <div className="grid">
               <>
                 {filteredNews.map((post) => (
@@ -125,11 +125,11 @@ export default function Readings() {
                 ))}
               </>
             </div>
-            <div className="flex justify-center mt-2 ">           
-     <Link to={"/news"}>
-            <p style={{color:'#2196ba'}}>
-              See more
-            </p></Link>
+            <div className="flex justify-center mt-2 ">
+              <Link to={"/news"}>
+                <p style={{ color: '#2196ba' }}>
+                  See more
+                </p></Link>
             </div>
             <div className="blogtitle">
               <Link to={"/Update"} className="link">
@@ -145,11 +145,11 @@ export default function Readings() {
                 ))}
               </>
             </div>
-            <div className="flex justify-center mt-2 mb-2">           
-     <Link to={"/Update"}>
-            <p style={{color:'#2196ba'}}>
-              See more
-            </p></Link>
+            <div className="flex justify-center mt-2 mb-2">
+              <Link to={"/Update"}>
+                <p style={{ color: '#2196ba' }}>
+                  See more
+                </p></Link>
             </div>
           </>
         )}

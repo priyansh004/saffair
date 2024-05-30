@@ -57,7 +57,7 @@ export default function SignIn() {
       <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5">
         <div className="flex-1">
           <Link to="/" className="font-bold dark:text-white text-4xl">
-            <img src="./assets/logo.png" alt="" className="w-24" />
+            <img src="./assets/logo.png" alt="" className="w-36" />
           </Link>
           <p className="text-lg mt-5 font-bold">Welcome to Saffair</p>
         </div>

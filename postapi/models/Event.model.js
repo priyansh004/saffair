@@ -55,6 +55,15 @@ const eventSchema = mongoose.Schema(
       type: Date,
       // required: true,
     },
+    yes:{
+      type:Number,
+    },
+    no:{
+      type:Number,
+    },
+    maybe:{
+      type:Number,
+    }
   },
   { timestamps: true }
 );

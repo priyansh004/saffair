@@ -172,28 +172,26 @@ export default function Navbar({ _id }) {
               fontSize="15px"
               arrowIcon={false}
             >
-              <Link to="/blog" className="links">
+              <Link to="/blog" className={`links ${activeLink === 'blog' ? 'active' : ''}`}>
                 <Dropdown.Item>Blogs</Dropdown.Item>
               </Link>
-              <Link to="/news" className="links">
+              <Link to="/news" className={`links ${activeLink === 'news' ? 'active' : ''}`}>
                 <Dropdown.Item>News</Dropdown.Item>
               </Link>
-              <Link to="/update" className="links">
+              <Link to="/update" className={`links ${activeLink === 'update' ? 'active' : ''}`}>
                 <Dropdown.Item>Updates</Dropdown.Item>
               </Link>
             </Dropdown>
-            
-            
-
           </div>
+          
           <Link to="/events">
-              <a
-                className={`centerItem ${activeLink === 'campaigns' ? 'active' : ''}`}
-                onClick={() => handleClick('campaigns')}
-              >
-                Campaigns
-              </a>
-            </Link>
+            <a
+              className={`centerItem ${activeLink === 'campaigns' ? 'active' : ''}`}
+              onClick={() => handleClick('campaigns')}
+            >
+              Campaigns
+            </a>
+          </Link>
           <Link to="/aboutus">
             <a
               className={`centerItem ${activeLink === 'aboutus' ? 'active' : ''}`}

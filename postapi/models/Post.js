@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { type } = require("os");
 const { Schema, model } = mongoose;
 
 const PostSchema = new Schema(
@@ -9,7 +10,6 @@ const PostSchema = new Schema(
     },
     content: {
       type: String,
-      required: true,
     },
     title: {
       type: String,
@@ -34,6 +34,9 @@ const PostSchema = new Schema(
       default:
         "https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png",
     },
+    tags: {
+      type: [String],
+    },
     category: {
       type: String,
       default: "uncategorized",
@@ -48,8 +51,6 @@ const PostSchema = new Schema(
     },
     slug: {
       type: String,
-      required: true,
-      unique: true,
     },
 
     publish: {
@@ -69,7 +70,6 @@ const PostSchema = new Schema(
     correctAnswer: {
       type: String,
     },
-    
   },
   { timestamps: true }
 );

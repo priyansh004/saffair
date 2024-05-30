@@ -43,9 +43,9 @@ export default function Register() {
         {/* left */}
         <div className="flex-1">
           <Link to="/" className="font-bold dark:text-white text-4xl">
-            <img src="./assets/logo.png" alt="" className="w-24" />
+            <img src="./assets/logo.png" alt="" className="w-36" />
           </Link>
-          <p className="text-sm mt-5">welcome to the saffair weather app</p>
+          <p className="text-lg mt-5 font-bold">Welcome to Saffair</p>
         </div>
         {/* right */}
 

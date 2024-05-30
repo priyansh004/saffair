@@ -21,6 +21,14 @@ const firebaseConfig = {
   // storageBucket: "mearn-blog-29cbc.appspot.com",
   // messagingSenderId: "862933082272",
   // appId: "1:862933082272:web:3f81b35f6191b5674e69c5",
+
+  // apiKey: "AIzaSyDncYchOyKUiHA_iJkKQIOQzFA7AdgNugw",
+  // authDomain: "tpede-84f8f.firebaseapp.com",
+  // projectId: "tpede-84f8f",
+  // storageBucket: "tpede-84f8f.appspot.com",
+  // messagingSenderId: "88980328452",
+  // appId: "1:88980328452:web:1a92a7e641002ca253a551",
+  // measurementId: "G-F626S078NH"
 };
 
 // Initialize Firebase
@@ -33,12 +41,12 @@ export const gestorage = getStorage(app);
 
 
 
+// api
 
+// 6Lf1YewpAAAAAE27-KSrUi29qIPNHLXAkYLBItf4
+// secret 
 
-
-
-
-
+// 6Lf1YewpAAAAAGHgwCDhRLikMY4FuaSI9x1FFvDO
 // Import the functions you need from the SDKs you need
 // import { initializeApp } from "firebase/app";
 // import { getAnalytics } from "firebase/analytics";
