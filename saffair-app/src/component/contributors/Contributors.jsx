@@ -401,7 +401,7 @@ export default function Contributors() {
                 <label>
                   Profile Picture
                 </label>
-                <div className=" thenames grid grid-cols-1 mb-2 md:grid-cols-2 sm:grid-cols-2">
+                <div className="thenames grid grid-cols-1 mb-2 md:grid-cols-2 sm:grid-cols-2 ">
 
                   <input
                     type="file"
@@ -411,7 +411,7 @@ export default function Contributors() {
                     hidden
                   />
                   <div
-                    className="relative  w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full"
+                    className="justify-items-center align-items-center relative flex flex-row w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full"
                     onClick={() => filePickerRef.current.click()}
                   >
                     {imageFileUploadProgress && (
@@ -437,7 +437,7 @@ export default function Contributors() {
                     <img
                       src={imageFileUrl || currentUser.profilePicture}
                       alt="user"
-                      className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${imageFileUploadProgress &&
+                      className={` self-center items-center rounded-full w-full h-full object-cover border-8 border-[lightgray] ${imageFileUploadProgress &&
                         imageFileUploadProgress < 100 &&
                         "opacity-60"
                         }`}
@@ -486,11 +486,26 @@ export default function Contributors() {
                         placeholder="XXXXXXXXXX" // Placeholder with country code
                         required
                       />
-                      {<div className="mb-2">
+                      {/* {<div className="mb-2 flex flex-row gap-3 justify-between">
                         <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded" onClick={handleSendCode}>
                           Send OTP
                         </button>
-                      </div>}
+
+
+                        <TextInput
+                          type="text"
+                          id="phone"
+                          value={verificationCode}
+                          onChange={setVerificationCode}
+                          maxLength={6} // Maximum length including the country code
+                          placeholder="type code here" // Placeholder with country code
+                          required
+
+                        />
+                        <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded" onClick={handleSendCode}>
+                          Verify
+                        </button>
+                      </div>} */}
                     </div>
                   </div>
                   <div>

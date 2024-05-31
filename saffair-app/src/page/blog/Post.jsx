@@ -8,7 +8,7 @@ export default function Post({
   _id,
   title,
   createdAt,
-  image,
+  image1,
   bookmark,
   content,
   category,
@@ -52,7 +52,7 @@ export default function Post({
           <Link to={`/post/${_id}`}>
             <div className="card__header">
               <img
-                src={image}
+                src={image1}
                 alt="card__image"
                 className="card__image"
                 width="600"

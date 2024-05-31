@@ -133,7 +133,7 @@ export default function PostPage() {
                     <BookMark post={postInfo} />
                   </div>
                   <img
-                    src={postInfo.image}
+                    src={postInfo.image1}
                     className="postImg"
                     alt="post img"
                     srcSet=""
