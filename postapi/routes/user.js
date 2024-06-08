@@ -121,6 +121,10 @@ routes.put("/update/:userId", verifyToken, async (req, res, next) => {
       }
       updateFields.username = req.body.username;
     }
+    if (req.body.profilePicture) {
+      // Assuming the profilePicture is a URL or a string representing the image path
+      updateFields.profilePicture = req.body.profilePicture;
+    }
     updateFields.firstName = req.body.firstName;
     updateFields.lastName = req.body.lastName;
     updateFields.bio = req.body.bio;

@@ -11,6 +11,8 @@ router.post("/", async (req, res) => {
     const saveEvent = await newEvent.save();
 
     res.status(200).json(saveEvent);
+    navigate(`/events`);
+
   } catch (error) {
     return res.status(500).json(error);
   }
@@ -37,35 +39,42 @@ router.put("updateEvent/:EventId/:userId", async (req, res) => {
 // Route to add an entry to the eventEntries subdocument
 router.put("/addEntry/:eventId/:userId", async (req, res) => {
   try {
-    // Extract data from the request body
-    const { title, content, date, image1, image2, image3 } = req.body;
+    // Extract data from the request body with validation
+    const {   content, image1, image2, link1, link2, category } = req.body;
+
+    if (!content) {
+      return res.status(400).json({ message: "Content is required" });
+    }
 
     // Find the event by its ID
     const event = await Event.findById({ _id: req.params.eventId });
 
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    // Check for existing entry (optional, based on your logic)
     const existingEntry = event.eventEntries.find(
       (entry) => entry.userId === req.params.userId
     );
+
     if (existingEntry) {
       return res
         .status(400)
         .json({ message: "User is already a participant in the event" });
     }
 
-    if (!event) {
-      return res.status(404).json({ message: "Event not found" });
-    }
-
-    // Add the new entry to the eventEntries array
-    event.eventEntries.push({
-      title,
+    // Create a new entry object with current date and time
+    const newEntry = {
       userId: req.params.userId,
       content,
       image1,
       image2,
-      image3,
-      date,
-    });
+      date: new Date(), // Use new Date() for current date/time
+    };
+
+    // Add the new entry to the eventEntries array
+    event.eventEntries.push(newEntry);
 
     // Save the updated event
     const updatedEvent = await event.save();
@@ -73,10 +82,11 @@ router.put("/addEntry/:eventId/:userId", async (req, res) => {
     // Send a response indicating success and the updated event data
     res.status(201).json(updatedEvent);
   } catch (error) {
-    // If an error occurs, send an error response
-    res.status(500).json({ message: error.message });
+    console.log("Error updating event entry:", error);
+    res.status(500).json({ message: error.message }); // Generic error message for user
   }
 });
+
 
 // router.put("joinEvent/:eventId/:userId", async (req, res) => {
 //   if (req.user.isAdmin) {

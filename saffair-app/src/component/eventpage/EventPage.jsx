@@ -87,6 +87,12 @@ export default function EventPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      eventTitle: eventInfo.eventTitle,
+    }));
+    console.log(formData)
+
     try {
       const res = await fetch(
         `http://localhost:6600/api/events/addEntry/${id}/${currentUser._id}`,
@@ -97,9 +103,11 @@ export default function EventPage() {
           },
           credentials: "include",
           body: JSON.stringify(formData),
+          
         }
       );
       const data = await res.json();
+      // console.log(data)
       if (!res.ok) {
         setPublishError(data.message);
         return;
@@ -107,20 +115,31 @@ export default function EventPage() {
 
       if (res.ok) {
         setPublishError(null);
-        navigate(`/blog`);
+        navigate(`/events`);
       }
     } catch (error) {
       setPublishError("Something went wrong");
     }
   };
 
-  console.log(eventInfo);
-  const [selectedOption, setSelectedOption] = useState(null);
+  const [links, setLinks] = useState(['']); // Initialize with an empty link field
+  const [uploadErrors, setUploadErrors] = useState([]);
 
-  const handleButtonClick = (response) => {
-    console.log("User selected:", response);
-    setSelectedOption(response);
+  const handleAddLink = () => {
+    if (links.length < 2) {
+      setLinks([...links, '']);
+    } else {
+      setUploadErrors(['Maximum 2 links allowed']);
+    }
   };
+
+  const handleRemoveLink = (index) => {
+    const updatedLinks = [...links];
+    updatedLinks.splice(index, 1);
+    setLinks(updatedLinks);
+  };
+
+
   return (
     <>
       <div className="mt-20" >
@@ -135,39 +154,9 @@ export default function EventPage() {
               dangerouslySetInnerHTML={{ __html: eventInfo.eventDescription }}
             />
 
+
             <div className="p-3 max-w-3xl mx-auto mt-8 min-h-screen">
-              <h1 className="text-center text-3xl my-7 font-semibold">
-                Are you willing to join?</h1>
-                <div className="flex justify-center mt-4 space-x-4">
-        <button
-          onClick={() => handleButtonClick("Yes")}
-          className={`${
-            selectedOption === "Yes"
-              ? "bg-green-800"
-              : "bg-green-200 hover:bg-green-600"
-          } text-white font-bold py-2 px-4 rounded transition duration-300`}
-        >
-          Yes
-        </button>
-        <button
-          onClick={() => handleButtonClick("No")}
-          className={`${
-            selectedOption === "No" ? "bg-red-800" : "bg-red-200 hover:bg-red-600"
-          } text-white font-bold py-2 px-4 rounded transition duration-300`}
-        >
-          No
-        </button>
-        <button
-          onClick={() => handleButtonClick("Maybe")}
-          className={`${
-            selectedOption === "Maybe"
-              ? "bg-blue-800"
-              : "bg-blue-200 hover:bg-blue-600"
-          } text-white font-bold py-2 px-4 rounded transition duration-300`}
-        >
-          Maybe
-        </button>
-      </div>
+
               <h1 className="text-center text-3xl my-7 font-semibold">
                 Let's Participate
               </h1>
@@ -181,21 +170,9 @@ export default function EventPage() {
                       })
                     }
                   >
-                    <option value="N&U">News / Updates</option>
-                    <option value="legal Updates">Legal Updates</option>
-                    <option value="Innovation">Innovation</option>
-                    <option value="GYV">
-                      Get Your Voice Bigger with Community (with Solution)
-                    </option>
-                    <option value="Reforms">Suggest a Reforms</option>
+
                     <option value="Campaigns">Join our Campaigns</option>
-                    <option value="D/S">Donates / Sponsor</option>
-                    <option value="AirAnalyzer">
-                      Get outdoor Air Analyzer
-                    </option>
-                    <option value="Suggetions">
-                      Need Community Support / Suggetions / Survey
-                    </option>
+
                   </Select>
                 )}
                 <div className="flex flex-col gap-4 sm:flex-row justify-between">
@@ -205,14 +182,20 @@ export default function EventPage() {
                     required
                     id="title"
                     className="flex-1"
+                    value={eventInfo.eventTitle}
                     onChange={(e) =>
-                      setFormData({ ...formData, title: e.target.value })
+                      setFormData({ ...formData, eventTitle: eventInfo.eventTitle })
                     }
+                    disabled // Add the disabled attribute to make it read-only
                   />
+
+
                   <Select
+                    value={eventInfo.category} // Assuming eventinfo is your state containing fetched data
                     onChange={(e) =>
                       setFormData({ ...formData, category: e.target.value })
                     }
+                  // disabled // Add the disabled attribute to make it read-only
                   >
                     <option value="uncategorized">Select a category</option>
                     <option value="agriculture">Agriculture</option>
@@ -242,6 +225,7 @@ export default function EventPage() {
                     <option value="weather">Weather</option>
                     <option value="other">Other</option>
                   </Select>
+
                 </div>
                 <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
                   <FileInput
@@ -324,6 +308,45 @@ export default function EventPage() {
                     setFormData({ ...formData, content: value });
                   }}
                 />
+                {links.map((link, index) => (
+                  <div key={index} className="my-2 flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
+                    <input
+                      type="text"
+                      value={index === 0 ? formData.link1 : formData.link2}
+                      onChange={(e) => {
+                        const updatedFormData = { ...formData };
+                        if (index === 0) {
+                          updatedFormData.link1 = e.target.value;
+                        } else {
+                          updatedFormData.link2 = e.target.value;
+                        }
+                        setFormData(updatedFormData);
+                      }}
+                      placeholder="Enter link"
+                      className="flex-1 border border-gray-300 rounded-md py-1 px-3"
+                    />
+                    <Button
+                      type="button"
+                      gradientDuoTone="redToOrange"
+                      size="sm"
+                      outline
+                      onClick={() => handleRemoveLink(index)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                ))}
+
+
+                <div className="flex gap-4">
+                  <Button type="button" onClick={handleAddLink} gradientDuoTone="cyanToBlue">
+                    Add more Link
+                  </Button>
+
+                </div>
+                {uploadErrors.length > 0 && (
+                  <Alert color="failure">{uploadErrors.join('\n')}</Alert>
+                )}
 
                 <Button type="submit" gradientDuoTone="cyanToBlue">
                   Publish
@@ -331,6 +354,7 @@ export default function EventPage() {
                 {publishError && (
                   <Alert className="mt-5" color="failure">
                     {publishError}
+                    
                   </Alert>
                 )}
               </form>

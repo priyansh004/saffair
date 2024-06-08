@@ -7,13 +7,13 @@ import { getStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBArH3bgJdZRx5kp8eJgWgS7oVGwNQ2Bz8",
-  authDomain: "test-ca362.firebaseapp.com",
-  projectId: "test-ca362",
-  storageBucket: "test-ca362.appspot.com",
-  messagingSenderId: "1014541983110",
-  appId: "1:1014541983110:web:31cac8ce39ac2ee43ee007",
-  measurementId: "G-7DS999J1Q3",
+  // apiKey: "AIzaSyBArH3bgJdZRx5kp8eJgWgS7oVGwNQ2Bz8",
+  // authDomain: "test-ca362.firebaseapp.com",
+  // projectId: "test-ca362",
+  // storageBucket: "test-ca362.appspot.com",
+  // messagingSenderId: "1014541983110",
+  // appId: "1:1014541983110:web:31cac8ce39ac2ee43ee007",
+  // measurementId: "G-7DS999J1Q3",
   
   // apiKey: "AIzaSyAgr_vnbhFxsD3dM1IvROv6gRmdAq-ZFPc",
   // authDomain: "mearn-blog-29cbc.firebaseapp.com",
@@ -22,13 +22,13 @@ const firebaseConfig = {
   // messagingSenderId: "862933082272",
   // appId: "1:862933082272:web:3f81b35f6191b5674e69c5",
 
-  // apiKey: "AIzaSyDncYchOyKUiHA_iJkKQIOQzFA7AdgNugw",
-  // authDomain: "tpede-84f8f.firebaseapp.com",
-  // projectId: "tpede-84f8f",
-  // storageBucket: "tpede-84f8f.appspot.com",
-  // messagingSenderId: "88980328452",
-  // appId: "1:88980328452:web:1a92a7e641002ca253a551",
-  // measurementId: "G-F626S078NH"
+  apiKey: "AIzaSyDh8PRbsZ6Ovs_IK8fiC4PALuVid7nQ0b8",
+  authDomain: "test-f8e24.firebaseapp.com",
+  projectId: "test-f8e24",
+  storageBucket: "test-f8e24.appspot.com",
+  messagingSenderId: "142165432615",
+  appId: "1:142165432615:web:ab1944e0df93f575c13102",
+  measurementId: "G-42N1GDTTS3"
 };
 
 // Initialize Firebase

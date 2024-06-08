@@ -75,6 +75,7 @@ export default function Register() {
                 type="password"
                 placeholder="**********"
                 id="password"
+
                 onChange={handleChange}
               />
             </div>

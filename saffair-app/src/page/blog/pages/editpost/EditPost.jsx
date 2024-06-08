@@ -170,10 +170,17 @@ export default function EditPost() {
           </Button>
         </div>
         {imageUploadError && <Alert color="failure">{imageUploadError}</Alert>}
-        {formData.image && (
+        {formData.image1 && (
           <img
-            src={formData.image}
-            alt="upload"
+            src={formData.image1}
+            alt={formData.image1}
+            className="w-full h-72 object-cover"
+          />
+        )}
+        {formData.image2 && (
+          <img
+            src={formData.image2}
+            alt={formData.image2}
             className="w-full h-72 object-cover"
           />
         )}

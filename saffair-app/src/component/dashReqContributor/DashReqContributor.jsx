@@ -367,7 +367,11 @@ export default function DashReqContributor() {
           >
             I accept
           </Button>
-          <Button color="gray" onClick={() => setOpenModal(false)}>
+          <Button color="gray"
+            onClick={() => {
+              toggleIsReq(selectedUser._id);
+              setOpenModal(false)
+            }}>
             Decline
           </Button>
         </Modal.Footer>

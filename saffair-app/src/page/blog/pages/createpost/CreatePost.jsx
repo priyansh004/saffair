@@ -17,7 +17,8 @@ import { formatDate } from "date-fns";
 import { Viewer, Worker } from '@react-pdf-viewer/core';
 import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
-import PDFPreview from './PDFPreview';
+import PDFViewer from "./PDFViewer";
+import { Document, Page } from 'react-pdf';
 
 export default function CreatePost() {
 
@@ -265,25 +266,7 @@ export default function CreatePost() {
   };
 
 
-  const [selectedOption, setSelectedOption] = useState("");
 
-  const mediahandleOptionChange = (e) => {
-    setSelectedOption(e.target.value);
-  };
-
-
-  const PDFViewer = ({ pdfUrl }) => {
-    return (
-      <div className="w-full h-72 object-cover">
-        <Worker workerUrl="https://unpkg.com/pdfjs-dist@2.7.570/build/pdf.worker.min.js">
-          <Viewer
-            fileUrl={pdfUrl}
-            defaultScale={1.5}
-          />
-        </Worker>
-      </div>
-    );
-  };
   const [cselectedOption, csetSelectedOption] = useState("Blog");
   const [links, setLinks] = useState(['']); // Initialize with an empty link field
   const [uploadErrors, setUploadErrors] = useState([]);
@@ -347,6 +330,10 @@ export default function CreatePost() {
 
   const handleEventChange = (event) => {
     setSelectedEvent(event.target.value);
+  };
+
+  const isImage = (url) => {
+    return /\.(jpeg|jpg|gif|png)$/.test(url);
   };
 
   return (
@@ -588,7 +575,7 @@ export default function CreatePost() {
                   </div>
                 )} */}
 
-
+{/* 
                 {imageUploadError && (
                   <Alert color="failure">{imageUploadError}</Alert>
                 )}
@@ -598,7 +585,7 @@ export default function CreatePost() {
                     alt="upload"
                     className="w-full h-72 object-cover"
                   />
-                )}
+                )} */}
 
 
               </div>
@@ -612,7 +599,6 @@ export default function CreatePost() {
               Title
             </label>
             <div className="flex flex-col gap-4 sm:flex-row justify-between">
-
               <TextInput
                 type="text"
                 placeholder="Title"
@@ -654,13 +640,7 @@ export default function CreatePost() {
                 </Button>
               </div>
               {(documentUploadError || imageUploadError) && <Alert color="failure">{(documentUploadError || imageUploadError)}</Alert>}
-              {/* {(formData.pdf || formData.image) && (
-              <img
-                src={formData.pdf || formData.image}
-                alt="upload"
-                className="w-full h-72 object-cover"
-              />
-            )} */}
+             
               {
                 (formData.image1) ? <img
                   src={formData.image1}
@@ -674,6 +654,8 @@ export default function CreatePost() {
                 </>
 
               }
+              
+
 
 
 

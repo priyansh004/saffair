@@ -139,7 +139,7 @@ export default function Navbar({ _id }) {
       // className={`navbarContainer fixed top-0 ${isScrolled ? "scrolled" : ""}`}
       className={`navbarContainer  top-0 ${isScrolled ? 'scrolled' : ''}`}
     >
-      <div className="leftNevbar">
+      <div className="leftNevbar flex flex-row justify-center items-center">
         <div className="logoContainer">
           <img
             className="logoNevbar"
@@ -164,7 +164,30 @@ export default function Navbar({ _id }) {
           </a>
 
 
-          <div className="centerItem lg:flex items-center gap-4">
+
+          <a className={`centerItem ${['blog', 'news', 'update'].includes(activeLink) ? 'active' : ''} lg:flex items-center gap-4`}>
+            <Dropdown
+              label="Readings"
+              size="2xl"
+              color="black"
+              fontSize="15px"
+              arrowIcon={false}
+            >
+              <Link to="/blog" onClick={() => handleClick('/blog', 'blog')} className={`links ${activeLink === 'blog' ? 'active' : ''}`}>
+                <Dropdown.Item>Blogs</Dropdown.Item>
+              </Link>
+              <Link to="/news" onClick={() => handleClick('/news', 'news')} className={`links ${activeLink === 'news' ? 'active' : ''}`}>
+                <Dropdown.Item>News</Dropdown.Item>
+              </Link>
+              <Link to="/update" onClick={() => handleClick('/update', 'update')} className={`links ${activeLink === 'update' ? 'active' : ''}`}>
+                <Dropdown.Item>Updates</Dropdown.Item>
+              </Link>
+            </Dropdown>
+          </a>
+
+
+
+          {/* <div className="centerItem lg:flex items-center gap-4">
             <Dropdown
               label="Readings"
               size="3xl"
@@ -182,8 +205,8 @@ export default function Navbar({ _id }) {
                 <Dropdown.Item>Updates</Dropdown.Item>
               </Link>
             </Dropdown>
-          </div>
-          
+          </div> */}
+
           <Link to="/events">
             <a
               className={`centerItem ${activeLink === 'campaigns' ? 'active' : ''}`}
@@ -226,29 +249,46 @@ export default function Navbar({ _id }) {
             inline
             label={
               <>
-                <div
-                  className="flex items-center p-0.5 rounded-full"
-                  style={{ border: '0.5px solid #2196ba' }}
-                >
-                  <Avatar
-                    alt="user"
-                    img={currentUser.profilePicture}
-                    rounded
-                    className="userprofile"
-                  />
-                  <p className="mx-2 text-l hidden sm:block">
-                    {currentUser.username}
-                  </p>
-                  <div className="border-l border-black h-7 p-1"></div>
+                {currentUser.isAdmin ? (
+                  <div
+                    className="flex items-center p-0.5 rounded-full"
+                    style={{ border: '0.5px solid #2196ba' }}
+                  >
+                    <Avatar
+                      alt="user"
+                      img={currentUser.profilePicture}
+                      rounded
+                      className="userprofile"
+                    />
+                    <p className="mx-2 text-l hidden sm:block">
+                      {currentUser.username}
+                    </p>
+                  </div>
+                ) : (
+                  <div
+                    className="flex items-center p-0.5 rounded-full"
+                    style={{ border: '0.5px solid #2196ba' }}
+                  >
+                    <Avatar
+                      alt="user"
+                      img={currentUser.profilePicture}
+                      rounded
+                      className="userprofile"
+                    />
+                    <p className="mx-2 text-l hidden sm:block">
+                      {currentUser.username}
+                    </p>
+                    <div className="border-l border-black h-7 p-1"></div>
 
-                  <Avatar
-                    alt="user"
-                    img="../assets/coin2.png"
-                    rounded
-                    className="userprofile"
-                  />
-                  <p className="mx-2 text-l hidden sm:block">{coin}</p>
-                </div>
+                    <Avatar
+                      alt="coin"
+                      img="../assets/coin2.png"
+                      rounded
+                      className="userprofile"
+                    />
+                    <p className="mx-2 text-l hidden sm:block">{coin}</p>
+                  </div>
+                )}
               </>
             }
           >

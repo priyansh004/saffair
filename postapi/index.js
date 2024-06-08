@@ -13,7 +13,6 @@ const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const verifyToken = require("./utils/verifyUser");
 const voucher =require("./routes/voucher.routes.js");
-
 // MIDDLLWARE
 dotenv.config();
 app.use(express.json());
@@ -209,7 +208,10 @@ app.put(
             title: req.body.title,
             content: req.body.content,
             category: req.body.category,
-            image: req.body.image,
+            image1: req.body.image1,
+            image2: req.body.image2,
+            link1:req.body.link1,
+            link2:req.body.link2,
             publish: req.body.publish,
           },
         },
@@ -221,7 +223,26 @@ app.put(
     }
   }
 );
-
+//fecthig events title
+app.get('/eventtitle', async (req, res) => {
+  try {
+    // Assuming mongoose is already connected
+  
+    const Event = mongoose.model('event'); // Assuming 'event' is your Mongoose model name
+  
+    // Find events with titles matching the regex pattern
+    const evenTitleEvents = await Event.find({ eventTitle: { $regex: /^(?:\w+\s)*\w$/ } });
+  
+    // Extract event titles
+    const eventTitles = evenTitleEvents.map(event => event.title);
+  
+    res.json({ eventTitles }); // Send the array of event titles in the response
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching event titles' }); // Handle errors gracefully
+  }
+  
+});
 // Route to fetch all bookmarks of a user
 app.get("/bookmarks/:userId", async (req, res) => {
   try {

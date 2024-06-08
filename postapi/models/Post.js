@@ -34,6 +34,12 @@ const PostSchema = new Schema(
       default:
         "https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png",
     },
+    link1:{
+      type:String,
+    },
+    link2:{
+      type:String,
+    },
     tags: {
       type: [String],
     },

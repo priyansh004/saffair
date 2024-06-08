@@ -2,6 +2,7 @@
   "dependencies": {
     "fortawesome": "^0.0.1-security",
     "otp-input-react": "^0.3.0",
+    "react-hot-toast": "^2.4.1",
     "react-phone-input-2": "^2.15.1",
     "react-recaptcha-v2": "^1.0.2"
   }
