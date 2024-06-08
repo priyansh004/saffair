@@ -19,9 +19,14 @@ import {
   deleteUserFailure,
   signoutSuccess,
 } from "../../redux/user/userSlice";
-import { getAuth, signInWithPhoneNumber, confirmOTP, RecaptchaVerifier, updatePhoneNumber, RecaptchaVerifier_Instance, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithPhoneNumber, confirmOTP, signInWithCredential, updatePhoneNumber, RecaptchaVerifier_Instance, signInWithEmailAndPassword } from "firebase/auth";
 import { app, auth } from "../../firebase.js"
 import { CircularProgressbar } from "react-circular-progressbar";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import { RecaptchaVerifier } from "firebase/auth";
+import { addPhoneNumber, addUser, changeStateFalse } from "./otpSlice.js";
+import toast from "react-hot-toast";
 
 import {
   getDownloadURL,
@@ -63,8 +68,12 @@ const gradeOptions = [
   { value: "E", label: "0-34%" },
 ];
 
+
 export default function Contributors() {
+  const dispatch = useDispatch();
+
   const auth = getAuth(app);
+
 
   const {
     currentUser,
@@ -72,7 +81,6 @@ export default function Contributors() {
     error: errorMessage,
   } = useSelector((state) => state.user);
   const [bio, setBio] = useState("");
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showEducationWork, setShowEducationWork] = useState(false);
   const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
@@ -92,15 +100,15 @@ export default function Contributors() {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
-  const phandleChange = (e) => {
-    setPhoneNumber(e.target.value);
+  // const phandleChange = (e) => {
+  //   setPhoneNumber(e.target.value);
 
-    setFormData({ ...formData, [e.target.id]: e.target.value });
-  };
-  const ohandleChange = (e) => {
-    setVerificationCode(e.target.value);
-    setFormData({ ...formData, [e.target.id]: e.target.value });
-  };
+  //   setFormData({ ...formData, [e.target.id]: e.target.value });
+  // };
+  // const ohandleChange = (e) => {
+  //   setVerificationCode(e.target.value);
+  //   setFormData({ ...formData, [e.target.id]: e.target.value });
+  // };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -345,41 +353,140 @@ export default function Contributors() {
   //   }
   // }
 
-  const [phoneNumber, setPhoneNumber] = useState('');
+  // const [phoneNumber, setPhoneNumber] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [verificationId, setVerificationId] = useState('');
+  const [isVerifyButtonDisabled, setIsVerifyButtonDisabled] = useState(false);
 
-  const handleSendCode = async () => {
+  const [otpTime, setOtpTime] = useState(40);
+
+
+  const [isVerified, setIsVerified] = useState(false);
+
+  const [phone, setPhone] = useState("");
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+  const sendOTP = async () => {
+    console.log(phone)
+    if (phone == "") {
+      toast.error("please enter a phone number");
+      return;
+    }
+
+    if (isButtonDisabled) {
+      return;
+    }
+
+
+
+    var recaptcha;
     try {
-      const token = await window.grecaptcha.execute('6Lf1YewpAAAAAE27-KSrUi29qIPNHLXAkYLBItf4'); // Replace with your reCAPTCHA v3 site key
-      const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, token);
+      setIsButtonDisabled(true);
+      recaptcha = new RecaptchaVerifier(auth, "recaptcha", {
+        size: "invisible",
+      });
+
+
+      const confirmationResult = await signInWithPhoneNumber(
+        auth,
+        "+" + phone,
+        recaptcha
+      );
+      toast.success("otp sended successfully");
+      console.log(confirmationResult)
+      dispatch(addUser(confirmationResult));
       setVerificationId(confirmationResult.verificationId);
-      alert('Verification code sent to your phone.'); // Inform user
-    } catch (error) {
-      console.error('Error sending code:', error.message);
-      alert('There was an error sending the verification code. Please try again.'); // Inform user
-    }
-  };
+      window.confirmation = confirmationResult;
 
-  const handleVerifyCode = async () => {
-    try {
-      if (!verificationId) {
-        throw new Error('No verification ID available. Please request a code first.');
+      dispatch(addPhoneNumber(phone));
+      dispatch(changeStateFalse());
+    } catch (error) {
+      switch (error.code) {
+        case "auth/too-many-requests":
+          toast.error("Too many requests. Please try again later.");
+          break;
+        case "auth/invalid-phone-number":
+          toast.error("The phone number is invalid.");
+          break;
+        default:
+          toast.error("Something went wrong. Please try again later.");
+          break;
       }
-
-      const credential = await signInWithPhoneNumber(auth, verificationId, verificationCode);
-      console.log('Successfully verified OTP:', credential.user);
-
-      // Handle successful verification (e.g., navigate to a different page)
-    } catch (error) {
-      console.error('Error verifying code:', error.message);
-      alert('Invalid verification code. Please try again.'); // Inform user
+      recaptcha = "";
+      console.log(error);
+    } finally {
+      setIsButtonDisabled(false);
     }
   };
+  const handleVerifyCode = async () => {
+    var code= verificationCode
+    if (!window.confirmation) {
+      console.error("Confirmation result is not available. Please ensure that OTP was sent successfully.");
+      return;
+    }
+  
+    window.confirmation.confirm(code)
+      .then((result) => {
+        // User signed in successfully
+        const user = result.user;
+        console.log("User signed in successfully:", user);
+        setIsVerified(true)
+        // ... Do something with the signed-in user info
+      })
+      .catch((error) => {
+        // User couldn't sign in (bad verification code?)
+        console.error("Error during confirmationResult.confirm", error);
+      });
+  };
+  const verifyOTP = async (e) => {
+    e.preventDefault();
 
-  useEffect(() => {
-    // Optional: Handle reCAPTCHA v3 script loading (if not included globally)
-  }, []);
+    if (!verificationCode || !verificationId) {
+      setError('Please enter the verification code');
+      return;
+    }
+
+    try {
+      const credential = await signInWithCredential(auth, verificationId, verificationCode);
+      const user = credential.user;
+      // User is successfully signed in
+      console.log('User is signed in:', user);
+      // Handle successful sign-in logic (e.g., redirect to protected content)
+    } catch (err) {
+      console.error('Error verifying code:', err);
+      setError(err.message);
+    }
+  };
+  // const handleSendCode = async () => {
+  //   try {
+  //     const token = await window.grecaptcha.execute('6Lf1YewpAAAAAE27-KSrUi29qIPNHLXAkYLBItf4'); // Replace with your reCAPTCHA v3 site key
+  //     const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, token);
+  //     setVerificationId(confirmationResult.verificationId);
+  //     alert('Verification code sent to your phone.'); // Inform user
+  //   } catch (error) {
+  //     console.error('Error sending code:', error.message);
+  //     alert('There was an error sending the verification code. Please try again.'); // Inform user
+  //   }
+  // };
+
+  const verifyOtp = () => {
+    window.confirmationResult.confirm(verificationCode)
+      .then((result) => {
+        // User signed in successfully
+        const user = result.user;
+        console.log("User signed in successfully:", user);
+      setIsVerified(true)
+      // ... Do something with the signed-in user info
+      })
+      .catch((error) => {
+        // User couldn't sign in (bad verification code?)
+        console.error("Error during confirmationResult.confirm", error);
+      });
+  };
+  
+  // useEffect(() => {
+  //   // Optional: Handle reCAPTCHA v3 script loading (if not included globally)
+  // }, []);
 
 
   return (
@@ -398,54 +505,157 @@ export default function Contributors() {
             >
               <div className="pdetails">
                 <p className="pdetailstag mb-4 font-bold">Personal details</p>
-                <label>
-                  Profile Picture
-                </label>
+
                 <div className="thenames grid grid-cols-1 mb-2 md:grid-cols-2 sm:grid-cols-2 ">
 
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    ref={filePickerRef}
-                    hidden
-                  />
-                  <div
-                    className="justify-items-center align-items-center relative flex flex-row w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full"
-                    onClick={() => filePickerRef.current.click()}
-                  >
-                    {imageFileUploadProgress && (
-                      <CircularProgressbar
-                        value={imageFileUploadProgress || 0}
-                        text={`${imageFileUploadProgress}%`}
-                        strokeWidth={5}
-                        styles={{
-                          root: {
-                            width: "100%",
-                            height: "100%",
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                          },
-                          path: {
-                            stroke: `rgba(62, 152, 199, ${imageFileUploadProgress / 100
-                              })`,
-                          },
-                        }}
+                  {/* <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      ref={filePickerRef}
+                      hidden
+                    />
+                    <div
+                      className="justify-items-center align-items-center relative flex flex-row w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full"
+                      onClick={() => filePickerRef.current.click()}
+                    >
+                      {imageFileUploadProgress && (
+                        <CircularProgressbar
+                          value={imageFileUploadProgress || 0}
+                          text={`${imageFileUploadProgress}%`}
+                          strokeWidth={5}
+                          styles={{
+                            root: {
+                              width: "100%",
+                              height: "100%",
+                              position: "absolute",
+                              top: 0,
+                              left: 0,
+                            },
+                            path: {
+                              stroke: `rgba(62, 152, 199, ${imageFileUploadProgress / 100
+                                })`,
+                            },
+                          }}
+                        />
+                      )}
+                      <img
+                        src={imageFileUrl || currentUser.profilePicture}
+                        alt="user"
+                        className={` self-center items-center rounded-full w-full h-full object-cover border-8 border-[lightgray] ${imageFileUploadProgress &&
+                          imageFileUploadProgress < 100 &&
+                          "opacity-60"
+                          }`}
                       />
-                    )}
-                    <img
-                      src={imageFileUrl || currentUser.profilePicture}
-                      alt="user"
-                      className={` self-center items-center rounded-full w-full h-full object-cover border-8 border-[lightgray] ${imageFileUploadProgress &&
-                        imageFileUploadProgress < 100 &&
-                        "opacity-60"
-                        }`}
+                    </div>
+                    {imageFileUploadError && (
+                      <Alert color="failure">{imageFileUploadError}</Alert>
+                    )} */}
+
+
+
+
+
+
+
+
+
+                  <div>
+                    <label>
+                      First Name<span className="text-red-500 ml-1">*</span>
+                    </label>
+                    <TextInput
+                      type="text"
+                      placeholder="First Name"
+                      id="firstName"
+                      onChange={handleChange}
+                      required
                     />
                   </div>
-                  {imageFileUploadError && (
-                    <Alert color="failure">{imageFileUploadError}</Alert>
-                  )}
+                  <div>
+                    <label>
+                      Last Name<span className="text-red-500 ml-1">*</span>
+                    </label>
+                    <TextInput
+                      type="text"
+                      placeholder="last Name"
+                      id="lastName"
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <div className="phone-container">
+                      <div className="phone-title">phone no. <span className="text-red-500 ml-1">*</span></div>
+                      <div className="phone-subcontainer flex flex-row gap-8">
+                        <div className="phone-filed">
+                          <PhoneInput
+                            country={"in"}
+                            value={phone}
+                            onChange={setPhone}
+                            
+                            placeholder="+91 xxxxx-xxxxx"
+                            className="mobile"
+                          />
+                        </div>
+                        <div className="phone-btn">
+                          <Button
+                            style={{ height: '48px', width: '128px' }}
+
+                            id="signup-btn"
+                            disabled={isButtonDisabled}
+                            onClick={() => sendOTP()}
+                            className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${isButtonDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          >
+                            <span>{isButtonDisabled ? "Sending..." : "Send code"}</span>
+                          </Button>
+
+
+
+                        </div>
+                      </div>
+                    </div>
+                    <div id="recaptcha"></div>
+
+                  </div>
+
+                  <div className="flex-col flex justify-between">
+                    <div>
+                      verification code<span className="text-red-500 ml-1">*</span>
+                    </div>
+                    <div className="flex flex-row gap-8">
+                      <TextInput
+                        type="text"
+                        placeholder="------"
+                        id="firstName"
+                        value={verificationCode}
+                        maxLength={6}
+                        onChange={(e) => setVerificationCode(e.target.value)}
+                        required
+                      />
+
+                      <div className="flex-row">
+
+                        <Button
+                          style={{ height: '48px', width: '128px' }}
+                          onClick={handleVerifyCode} disabled={isVerifyButtonDisabled}
+                          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                          {isVerifyButtonDisabled ? "Checking..." : "Verify OTP"}
+
+                        </Button>
+                        <div>
+                          {isVerified ? 'Verified' : null}
+                        </div>
+                      </div>
+
+                    </div>
+
+
+
+
+
+                  </div>
+
 
 
 
@@ -470,69 +680,9 @@ export default function Contributors() {
                       </>
                     )}
                   </div> */}
-                  <div className="mb-2">
-                    <label>
-                      Mobile Number<span className="text-red-500 ml-1">*</span>
-                    </label>
-                    <div className="flex flex-col gap-3  align-middle ">
-                      {/* <PhoneInput  showTitle={true} country={"in"} value={phoneNumber} onChange={phandleChange} /> */}
-
-                      <TextInput
-                        type="text"
-                        id="phone"
-                        value={phoneNumber}
-                        onChange={phandleChange}
-                        maxLength={10} // Maximum length including the country code
-                        placeholder="XXXXXXXXXX" // Placeholder with country code
-                        required
-                      />
-                      {/* {<div className="mb-2 flex flex-row gap-3 justify-between">
-                        <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded" onClick={handleSendCode}>
-                          Send OTP
-                        </button>
 
 
-                        <TextInput
-                          type="text"
-                          id="phone"
-                          value={verificationCode}
-                          onChange={setVerificationCode}
-                          maxLength={6} // Maximum length including the country code
-                          placeholder="type code here" // Placeholder with country code
-                          required
 
-                        />
-                        <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded" onClick={handleSendCode}>
-                          Verify
-                        </button>
-                      </div>} */}
-                    </div>
-                  </div>
-                  <div>
-
-                    <label>
-                      First Name<span className="text-red-500 ml-1">*</span>
-                    </label>
-                    <TextInput
-                      type="text"
-                      placeholder="First Name"
-                      id="firstName"
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label>
-                      Last Name<span className="text-red-500 ml-1">*</span>
-                    </label>
-                    <TextInput
-                      type="text"
-                      placeholder="last Name"
-                      id="lastName"
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
 
 
                   {/* <div className="mb-2">

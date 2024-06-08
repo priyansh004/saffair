@@ -19,12 +19,10 @@ import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import PDFPreview from './PDFPreview';
 
-
-
-
-
 export default function CreatePost() {
 
+  ////////Quiz functions
+  const [quizVisible, setQuizVisible] = useState(false);
 
   const [quizData, setQuizData] = useState({
     question: "",
@@ -63,39 +61,38 @@ export default function CreatePost() {
     setFormData(updatedFormData);
     console.log(updatedFormData);
   };
-  // const handleOptionChange = (index, value) => {
-  //   const updatedOptions = [...quizData.options];
-  //   updatedOptions[index] = value;
-  //   setQuizData({
-  //     ...quizData,
-  //     options: updatedOptions,
-  //   });
-  // };
 
-  // const handleCorrectAnswerChange = (index) => {
-  //   setQuizData({
-  //     ...quizData,
-  //     correctAnswerIndex: index,
-  //   });
-  // };
-
-
-
-  const [file, setFile] = useState(null);
-  const [imageUploadProgress, setImageUploadProgress] = useState(null);
-  const [imageUploadError, setImageUploadError] = useState(null);
-  const [formData, setFormData] = useState({
-    tags: [],
-  });
+  /////////Form publiched API
   const [publishError, setPublishError] = useState(null);
-  const { currentUser } = useSelector((state) => state.user);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("http://localhost:6600/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setPublishError(data.message);
+        return;
+      }
 
-  const [documentUploadError, setDocumentUploadError] = useState(null);
-  const [documentUploadProgress, setDocumentUploadProgress] = useState(null);
-  const [documentDownloadURL, setDocumentDownloadURL] = useState(null);
-  const navigate = useNavigate();
+      if (res.ok) {
+        setPublishError(null);
+        // navigate(`/post/${data.slug}`);
+        navigate(`/blog`);
+      }
+    } catch (error) {
+      setPublishError("Something went wrong");
+    }
+  };
 
+  /////////Tag adding functions
 
 
   const [tags, setTags] = useState([]);
@@ -128,28 +125,33 @@ export default function CreatePost() {
   };
 
 
-  // const handleAddQuiz = () => {
-  //   setFormData({
-  //     ...formData,
-  //     quiz: [
-  //       ...(formData.quiz || []), // Existing quiz data
-  //       quizData, // New quiz data
-  //     ],
-  //   });
-  //   console.log(FormData.)
-  // };
+  /////////Documents upload functions
 
-  const handleImageORDocument = async () => {
+  const { currentUser } = useSelector((state) => state.user);
+  const [formData, setFormData] = useState({
+    tags: [],
+  });
+
+  const [file, setFile] = useState(null);
+  const [imageUploadProgress, setImageUploadProgress] = useState(null);
+  const [imageUploadError, setImageUploadError] = useState(null);
+  const [documentUploadError, setDocumentUploadError] = useState(null);
+  const [documentUploadProgress, setDocumentUploadProgress] = useState(null);
+  // const [documentDownloadURL, setDocumentDownloadURL] = useState(null);
+  const navigate = useNavigate();
+
+
+  const handleImageORDocument = async (x) => {
     if (!file) {
       setImageUploadError("Please select a File");
     }
     else if (file.type === "image/jpeg" || file.type === "image/png") {
-      await handleUpdloadImage();
+      await handleUpdloadImage(x);
     } else {
-      await handleUploadDocument();
+      await handleUploadDocument(x);
     }
   }
-  const handleUpdloadImage = async () => {
+  const handleUpdloadImage = async (x) => {
     try {
       console.log("file = ", file)
       if (!file) {
@@ -176,7 +178,15 @@ export default function CreatePost() {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             setImageUploadProgress(null);
             setImageUploadError(null);
-            setFormData({ ...formData, image1: downloadURL });
+            if (x === 1) {
+              setFormData({ ...formData, image1: downloadURL });
+            }
+            else if (x === 2) {
+              setFormData({ ...formData, image2: downloadURL });
+            }
+            else if (x === 3) {
+              setFormData({ ...formData, image3: downloadURL });
+            }
           });
         }
       );
@@ -187,67 +197,13 @@ export default function CreatePost() {
       console.log(error);
     }
   };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch("http://localhost:6600/post", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(formData),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setPublishError(data.message);
-        return;
-      }
 
-      if (res.ok) {
-        setPublishError(null);
-        // navigate(`/post/${data.slug}`);
-        navigate(`/blog`);
-      }
-    } catch (error) {
-      setPublishError("Something went wrong");
-    }
-  };
 
-  // const handleQuizChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setQuizData({
-  //     ...quizData,
-  //     [name]: value,
-  //   });
-  // };
-
-  // const handleOptionChange = (index, value) => {
-  //   const updatedOptions = [...quizData.options];
-  //   updatedOptions[index] = value;
-  //   setQuizData({
-  //     ...quizData,
-  //     options: updatedOptions,
-  //   });
-  // };
-
-  const handleQuizSubmit = (e) => {
-    e.preventDefault();
-    setFormData({
-      ...formData,
-      quizQuestion: quizData.question,
-      quizOptions: quizData.options,
-      correctAnswer: quizData.correctAnswer,
-    });
-  };
-  const handleFileChange = (event) => {
-    const selectedFile = event.target.files[0];
-    setFile(selectedFile);
-  };
-
-  const handleUploadDocument = () => {
+  const handleUploadDocument = (x) => {
     try {
       // console.log(file)
+      console.log("file = ", file)
+
       if (!file) {
         setDocumentUploadError("Please select a document");
         return;
@@ -286,9 +242,17 @@ export default function CreatePost() {
           // Once upload is complete, get the download URL
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             setDocumentUploadProgress(null);
-            // setDocumentUploadError("Document upload successfully");
+            setDocumentUploadError("Document upload successfully");
             // Set the download URL in the state
-            setDocumentDownloadURL(downloadURL);
+            if (x === 1) {
+              setFormData({ ...formData, image1: downloadURL });
+            }
+            else if (x === 2) {
+              setFormData({ ...formData, image2: downloadURL });
+            }
+            else if (x === 3) {
+              setFormData({ ...formData, image3: downloadURL });
+            }
           });
         }
       );
@@ -307,28 +271,7 @@ export default function CreatePost() {
     setSelectedOption(e.target.value);
   };
 
-  const mediahandleSubmit = () => {
-    if (selectedOption === "upload") {
-      // Handle upload
-      console.log("Upload selected");
-    } else {
-      // Handle link
-      console.log("Link selected");
-    }
-  };
-  const chandleOptionChange = (e) => {
-    setSelectedOption(e.target.value);
-  };
 
-  const chandleSubmit = () => {
-    if (selectedOption === "campaign") {
-      // Handle campaign selection
-      console.log("Join our campaigns selected");
-    } else {
-      // Handle other selections
-      console.log("Other selection");
-    }
-  };
   const PDFViewer = ({ pdfUrl }) => {
     return (
       <div className="w-full h-72 object-cover">
@@ -342,40 +285,165 @@ export default function CreatePost() {
     );
   };
   const [cselectedOption, csetSelectedOption] = useState("Blog");
+  const [links, setLinks] = useState(['']); // Initialize with an empty link field
+  const [uploadErrors, setUploadErrors] = useState([]);
+
+  const handleAddLink = () => {
+    if (links.length < 2) {
+      setLinks([...links, '']);
+    } else {
+      setUploadErrors(['Maximum 2 links allowed']);
+    }
+  };
+
+  const handleRemoveLink = (index) => {
+    const updatedLinks = [...links];
+    updatedLinks.splice(index, 1);
+    setLinks(updatedLinks);
+  };
+
+  const handleLinkChange = (index, value) => {
+    const updatedLinks = [...links];
+    updatedLinks[index] = value;
+    setLinks(updatedLinks);
+  };
+  const [isDivVisible2, setDivVisible2] = useState(false);
+
+  const showDiv2 = () => {
+    setDivVisible2(true);
+  };
+  const hideDiv2 = () => {
+    setDivVisible2(false);
+  };
+
+  const [isDivVisible3, setDivVisible3] = useState(false);
+
+  const showDiv3 = () => {
+    setDivVisible3(true);
+  };
+  const hideDiv3 = () => {
+    setDivVisible3(false);
+  };
+
+  useEffect(() => {
+    // Fetch events from backend
+    fetchEventsFromBackend();
+  }, []);
+  const [events, setEvents] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState('');
+
+  const fetchEventsFromBackend = async () => {
+    try {
+      // Fetch events data from backend
+      const response = await fetch('http://localhost:6600/eventstitle');
+      const data = await response.json();
+
+      // Assuming events data is an array of objects with a 'title' property
+      setEvents(data);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    }
+  };
+
+  const handleEventChange = (event) => {
+    setSelectedEvent(event.target.value);
+  };
 
   return (
-    <div className="p-3 max-w-3xl mx-auto mt-8 min-h-screen">
+    <div className="mb-6 p-3 max-w-3xl mx-auto mt-8 min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">
         Create A Readings
       </h1>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        <label htmlFor="Select reading type" className="block text-sm font-medium text-gray-700">
+          Select reading type
+        </label>
+        <Select
 
-        {currentUser.isAdmin && (
-          <Select
+          onChange={(e) =>
+            setFormData({ ...formData, readingType: e.target.value })
+          }
+        >
+          <option value="Blog">Blog</option>
+          <option value="News">News</option>
+          <option value="Update">Update</option>
+          <option value="Legal Updates">Legal Updates</option>
+          <option value="innovation">innovation</option>
+          <option value="get your voice bigger with community">get your voice bigger with community</option>
+          <option value="suggest a reforms">suggest a reforms</option>
+          <option value="campaign">join our campaigns</option>
+          <option value="Donate/Sponser">Donate/Sponser</option>
+          <option value="Get outdoor Air Analyzer">Get outdoor Air Analyzer</option>
+          <option value="Need Community Support/Suggestions/Survey">Need Community Support/Suggestions/Survey</option>
+        </Select>
 
+        <div className="mb-4">
+          <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+            Category
+          </label>
+          <select
+            id="category"
+            name="category"
+            value={formData.category}
             onChange={(e) =>
-              setFormData({ ...formData, readingType: e.target.value })
+              setFormData({ ...formData, category: e.target.value })
             }
+            className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           >
-            <option value="Blog">Blog</option>
-            <option value="News">News</option>
-            <option value="Update">Update</option>
-            <option value="legal">Legal Updates</option>
-            <option value="Blog">innovation</option>
-            <option value="community">get your voice bigger with community</option>
-            <option value="Blog">suggest a reforms</option>
-            <option value="campaign">join our campaigns</option>
-            <option value="Blog">Donate/Sponser</option>
-            <option value="Blog">Get outdoor Air Analyzer</option>
-            <option value="support">Need Community Support/Suggestions/Survey</option>
-          </Select>
-        )}
-
-
+            <option value="uncategorized">Uncategorized</option>
+            <option value="agriculture">Agriculture</option>
+            <option value="bollywood">Bollywood</option>
+            <option value="business">Business</option>
+            <option value="crime">Crime</option>
+            <option value="economy">Economy</option>
+            <option value="education">Education</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="environment">Environment</option>
+            <option value="events">Events</option>
+            <option value="fashion">Fashion</option>
+            <option value="foreign">Foreign</option>
+            <option value="general">General</option>
+            <option value="health">Health</option>
+            <option value="hollywood">Hollywood</option>
+            <option value="international">International</option>
+            <option value="legal">Legal</option>
+            <option value="lifestyle">Lifestyle</option>
+            <option value="national">National</option>
+            <option value="politics">Politics</option>
+            <option value="religious">Religious</option>
+            <option value="science">Science</option>
+            <option value="sports">Sports</option>
+            <option value="stock market">Stock Market</option>
+            <option value="technology">Technology</option>
+            <option value="weather">Weather</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
         {formData.readingType === "campaign" ? (
           <div className="conditional-div gap-4">
             {/* Conditional div content for campaign */}
+            <div>
+              <label htmlFor="Title" className="block text-sm font-medium text-gray-700">
+                Title
+              </label>
+              <select
+                id="Title"
+                name="Title"
+                value={selectedEvent}
+                onChange={handleEventChange}
+                className="block w-full mt-1 p-2 border border-gray-300 rounded-md"
+              >
+                <option value="">Select an event</option>
+                {events.map((event) => (
+                  <option key={event.id} value={event.title}>
+                    {event.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="flex flex-col gap-4 justify-between">
+
               <TextInput
                 type="text"
                 placeholder="Title"
@@ -387,49 +455,164 @@ export default function CreatePost() {
                 }
               />
 
-              <div className="my-1 flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
-                <FileInput
-                  type="file"
+              < div className=" gap-2">
+                <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
+                  <FileInput
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setFile(e.target.files[0])}
+                  />
+                  <Button
+                    type="button"
+                    gradientDuoTone="cyanToBlue"
+                    size="sm"
+                    outline
+                    onClick={() => handleImageORDocument(1)}
+                    disabled={imageUploadProgress || documentUploadProgress}
+                  >
+                    {(documentUploadProgress || imageUploadProgress) ? (
+                      <div className="w-16 h-16">
+                        <CircularProgressbar
+                          value={documentUploadProgress || imageUploadProgress}
+                          text={`${(documentUploadProgress || imageUploadProgress) || 0}%`}
+                        />
+                      </div>
+                    ) : (
+                      "Upload image"
+                    )}
+                  </Button>
+                </div>
+                {(documentUploadError || imageUploadError) && <Alert color="failure">{(documentUploadError || imageUploadError)}</Alert>}
+                {/* {(formData.pdf || formData.image) && (
+              <img
+                src={formData.pdf || formData.image}
+                alt="upload"
+                className="w-full h-72 object-cover"
+              />
+            )} */}
+                {
+                  (formData.image1) ? <img
+                    src={formData.image1}
+                    alt={formData.image1}
+                    className="w-full h-72 object-cover"
+                  /> : <>
+                    {/* {documentDownloadURL && (
+                <PDFPreview pdfPath={documentDownloadURL} />
+              )} */}
 
-                  accept="pdf/*"
-                  onChange={(e) => setFile(e.target.files[0])}
-                />
-                <Button
-                  type="button"
-                  gradientDuoTone="cyanToBlue"
-                  size="sm"
-                  outline
-                  onClick={handleUpdloadImage}
-                  disabled={imageUploadProgress}
-                >
-                  {imageUploadProgress ? (
-                    <div className="w-16 h-16">
-                      <CircularProgressbar
-                        value={imageUploadProgress}
-                        text={`${imageUploadProgress || 0}%`}
+                  </>
+
+                }
+
+
+                {!isDivVisible2 && (
+                  <Button onClick={showDiv2} gradientDuoTone="cyanToBlue" className=" text-white my-2 py-2 px-4 rounded">add more</Button>
+                )}
+                {isDivVisible2 && (
+                  <div>
+                    <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
+                      <FileInput
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setFile(e.target.files[0])}
                       />
+                      <Button
+                        type="button"
+                        gradientDuoTone="cyanToBlue"
+                        size="sm"
+                        outline
+                        onClick={() => handleImageORDocument(2)}
+                        disabled={imageUploadProgress}
+                      >
+                        {imageUploadProgress ? (
+                          <div className="w-16 h-16">
+                            <CircularProgressbar
+                              value={imageUploadProgress}
+                              text={`${imageUploadProgress || 0}%`}
+                            />
+                          </div>
+                        ) : (
+                          "Upload Image 2"
+                        )}
+                      </Button>
+                      <Button onClick={hideDiv2}>Remove</Button>
+
                     </div>
-                  ) : (
-                    "Upload Image"
-                  )}
-                </Button>
-                {imageUploadError && <Alert color="failure">{imageUploadError}</Alert>}
+                    {imageUploadError && (
+                      <Alert color="failure">{imageUploadError}</Alert>
+                    )}
+                    {formData.image2 && (
+                      <img
+                        src={formData.image2}
+                        alt="upload"
+                        className="w-full h-72 object-cover"
+                      />
+                    )}
+                  </div>
+                )}
+
+
+                {/* 
+                {!isDivVisible3 && (
+
+                  <Button onClick={showDiv3} gradientDuoTone="cyanToBlue" className=" text-white my-2 py-2 px-4 rounded">add third document</Button>
+                )}
+                {isDivVisible2 && (
+                  <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
+                    <FileInput
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setFile(e.target.files[0])}
+                    />
+                    <Button
+                      type="button"
+                      gradientDuoTone="cyanToBlue"
+                      size="sm"
+                      outline
+                      onClick={() => handleImageORDocument(3)}
+                      disabled={imageUploadProgress}
+                    >
+                      {imageUploadProgress ? (
+                        <div className="w-16 h-16">
+                          <CircularProgressbar
+                            value={imageUploadProgress}
+                            text={`${imageUploadProgress || 0}%`}
+                          />
+                        </div>
+                      ) : (
+                        "Upload Image 3"
+                      )}
+                    </Button>
+                    <Button onClick={hideDiv3}>Remove</Button>
+
+                  </div>
+                )} */}
+
+
+                {imageUploadError && (
+                  <Alert color="failure">{imageUploadError}</Alert>
+                )}
+                {formData.image3 && (
+                  <img
+                    src={formData.image3}
+                    alt="upload"
+                    className="w-full h-72 object-cover"
+                  />
+                )}
+
 
               </div>
-              {formData.image && (
-                <img
-                  src={formData.image1}
-                  alt="upload"
-                  className="w-full h-72 object-cover"
-                />
-              )}
             </div>
 
           </div>
         ) : (
           <div className="conditional-div">
             {/* Conditional div content for other selections */}
+            <label htmlFor="Title" className="block text-sm font-medium text-gray-700">
+              Title
+            </label>
             <div className="flex flex-col gap-4 sm:flex-row justify-between">
+
               <TextInput
                 type="text"
                 placeholder="Title"
@@ -440,34 +623,14 @@ export default function CreatePost() {
                   setFormData({ ...formData, title: e.target.value })
                 }
               />
-              <div className="flex flex-col gap-4 sm:flex-row justify-between">
-                <select
-                  value={selectedOption}
-                  onChange={mediahandleOptionChange}
-                  className="border border-gray-300 rounded-md"
-                >
-                  <option value="upload">Upload</option>
-                  <option value="link">Link</option>
-                </select>
 
-              </div>
 
             </div>
-            {selectedOption === "link" ? (
-              <div className="my-2 flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
-                <input
-                  type="text"
-                  placeholder="Enter URL"
-                  className="border border-gray-300 rounded-md flex-1"
-                />
-
-              </div>
-            ) : (
-              <div className="my-2 flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
+            < div className="my-2 gap-10">
+              <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
                 <FileInput
                   type="file"
                   accept="*/*"
-                  // accept="application/pdf,image/jpeg,image/png,image/x-eps"
                   onChange={(e) => setFile(e.target.files[0])}
                 />
                 <Button
@@ -475,8 +638,8 @@ export default function CreatePost() {
                   gradientDuoTone="cyanToBlue"
                   size="sm"
                   outline
-                  onClick={handleImageORDocument}
-                  disabled={documentUploadProgress || imageUploadProgress}
+                  onClick={() => handleImageORDocument(1)}
+                  disabled={imageUploadProgress || documentUploadProgress}
                 >
                   {(documentUploadProgress || imageUploadProgress) ? (
                     <div className="w-16 h-16">
@@ -490,33 +653,144 @@ export default function CreatePost() {
                   )}
                 </Button>
               </div>
-            )}
-
-            {(documentUploadError || imageUploadError) && <Alert color="failure">{(documentUploadError || imageUploadError)}</Alert>}
-            {/* {(formData.pdf || formData.image) && (
+              {(documentUploadError || imageUploadError) && <Alert color="failure">{(documentUploadError || imageUploadError)}</Alert>}
+              {/* {(formData.pdf || formData.image) && (
               <img
                 src={formData.pdf || formData.image}
                 alt="upload"
                 className="w-full h-72 object-cover"
               />
             )} */}
-            {
-              (formData.image) ? <img
-                src={formData.pdf || formData.image1}
-                alt="upload"
-                className="w-full h-72 object-cover"
-              /> : <>
-                {/* {documentDownloadURL && (
+              {
+                (formData.image1) ? <img
+                  src={formData.image1}
+                  alt={formData.image1}
+                  className="w-full h-72 object-cover"
+                /> : <>
+                  {/* {documentDownloadURL && (
                 <PDFPreview pdfPath={documentDownloadURL} />
               )} */}
-                {
-                  documentDownloadURL
-                }
-              </>
 
-            }
+                </>
+
+              }
+
+
+
+
+
+              {!isDivVisible2 && (
+                <Button onClick={showDiv2} gradientDuoTone="cyanToBlue" className=" text-white my-2 py-2 px-4 rounded">add more</Button>
+              )}
+              {isDivVisible2 && (
+                <div>
+                  <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
+                    <FileInput
+                      type="file"
+                      accept="*/*"
+                      onChange={(e) => setFile(e.target.files[0])}
+                    />
+                    <Button
+                      type="button"
+                      gradientDuoTone="cyanToBlue"
+                      size="sm"
+                      outline
+                      onClick={() => handleImageORDocument(2)}
+                      disabled={imageUploadProgress || documentUploadProgress}
+                    >
+                      {(documentUploadProgress || imageUploadProgress) ? (
+                        <div className="w-16 h-16">
+                          <CircularProgressbar
+                            value={documentUploadProgress || imageUploadProgress}
+                            text={`${(documentUploadProgress || imageUploadProgress) || 0}%`}
+                          />
+                        </div>
+                      ) : (
+                        "Upload document"
+                      )}
+                    </Button>
+                  </div>
+                  {(documentUploadError || imageUploadError) && <Alert color="failure">{(documentUploadError || imageUploadError)}</Alert>}
+                  {/* {(formData.pdf || formData.image) && (
+              <img
+                src={formData.pdf || formData.image}
+                alt="upload"
+                className="w-full h-72 object-cover"
+              />
+            )} */}
+                  {
+                    (formData.image2) ? <img
+                      src={formData.image2}
+                      alt={formData.image2}
+                      className="w-full h-72 object-cover"
+                    /> : <>
+                      {/* {documentDownloadURL && (
+                <PDFPreview pdfPath={documentDownloadURL} />
+              )} */}
+
+                    </>
+
+                  }
+
+                </div>
+              )}
+
+
+              {/* 
+                {!isDivVisible3 && (
+
+                  <Button onClick={showDiv3} gradientDuoTone="cyanToBlue" className=" text-white my-2 py-2 px-4 rounded">add third document</Button>
+                )}
+                {isDivVisible2 && (
+                  <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
+                    <FileInput
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setFile(e.target.files[0])}
+                    />
+                    <Button
+                      type="button"
+                      gradientDuoTone="cyanToBlue"
+                      size="sm"
+                      outline
+                      onClick={() => handleImageORDocument(3)}
+                      disabled={imageUploadProgress}
+                    >
+                      {imageUploadProgress ? (
+                        <div className="w-16 h-16">
+                          <CircularProgressbar
+                            value={imageUploadProgress}
+                            text={`${imageUploadProgress || 0}%`}
+                          />
+                        </div>
+                      ) : (
+                        "Upload Image 3"
+                      )}
+                    </Button>
+                    <Button onClick={hideDiv3}>Remove</Button>
+
+                  </div>
+                )} */}
+
+
+              {imageUploadError && (
+                <Alert color="failure">{imageUploadError}</Alert>
+              )}
+              {formData.image3 && (
+                <img
+                  src={formData.image3}
+                  alt="upload"
+                  className="w-full h-72 object-cover"
+                />
+              )}
+
+
+            </div>
+
+
           </div>
         )}
+
 
 
 
@@ -534,26 +808,46 @@ export default function CreatePost() {
             setFormData({ ...formData, content: value });
           }}
         />
+        {links.map((link, index) => (
+          <div key={index} className="my-2 flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
+            <input
+              type="text"
+              value={index === 0 ? formData.link1 : formData.link2}
+              onChange={(e) => {
+                const updatedFormData = { ...formData };
+                if (index === 0) {
+                  updatedFormData.link1 = e.target.value;
+                } else {
+                  updatedFormData.link2 = e.target.value;
+                }
+                setFormData(updatedFormData);
+              }}
+              placeholder="Enter link"
+              className="flex-1 border border-gray-300 rounded-md py-1 px-3"
+            />
+            <Button
+              type="button"
+              gradientDuoTone="redToOrange"
+              size="sm"
+              outline
+              onClick={() => handleRemoveLink(index)}
+            >
+              Remove
+            </Button>
+          </div>
+        ))}
 
-        <div className="mb-4">
-          <label htmlFor="category" className="block text-sm font-medium text-gray-700">
-            Category
-          </label>
-          <select
-            id="category"
-            name="category"
-            value={formData.category}
-            onChange={(e) =>
-              setFormData({ ...formData, category: e.target.value })
-            }
-            className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          >
-            <option value="uncategorized">Uncategorized</option>
-            <option value="blog">Blog</option>
-            <option value="news">News</option>
-            <option value="updates">Updates</option>
-          </select>
+
+        <div className="flex gap-4">
+          <Button type="button" onClick={handleAddLink} gradientDuoTone="cyanToBlue">
+            Add more Link
+          </Button>
+
         </div>
+        {uploadErrors.length > 0 && (
+          <Alert color="failure">{uploadErrors.join('\n')}</Alert>
+        )}
+
 
         <div className="flex flex-wrap items-center gap-2">
           {tags.map((tag, index) => (
@@ -585,42 +879,46 @@ export default function CreatePost() {
           )}
         </div>
 
-        {currentUser.isAdmin ? (
 
-          <div>
-            <label htmlFor="Qna" className="block text-sm font-medium text-gray-700">
-              QNA
-            </label>
-            <TextInput
-              type="text"
-              placeholder="Quiz heading"
-              value={quizData.question}
-              onChange={(e) => setQuizData({ ...quizData, question: e.target.value })}
-              className="mb-4 mt-2"
-            />
-            {quizData.options.map((option, index) => (
-              <div key={index} className="gap-5">
-                <TextInput
-                  type="text"
-                  placeholder={`Option ${index + 1}`}
-                  value={option}
-                  onChange={(e) => handleOptionChange(index, e.target.value)}
-                  className="m-3"
-                />
-                <input
-                  type="radio"
-                  name="correctAnswer"
-                  checked={quizData.correctAnswerIndex === index}
-                  onChange={() => handleCorrectAnswerChange(index)}
-                />
-                <label className="m-3">Correct Answer</label>
-              </div>
-            ))}
-            <Button onClick={handleAddQuiz} className="my-4">Add Quiz</Button>
-          </div>
-        ) : (
-          <div></div>
-        )}
+        <div>
+          <Button gradientDuoTone="cyanToBlue" onClick={() => setQuizVisible(!quizVisible)} className="my-4">
+            {quizVisible ? 'Hide Quiz Form' : 'Add Quiz'}
+          </Button>
+
+          {quizVisible && (
+            <div>
+              <label htmlFor="Qna" className="block text-sm font-medium text-gray-700">
+                QNA (select the right answer below the option)
+              </label>
+              <TextInput
+                type="text"
+                placeholder="Quiz heading"
+                value={quizData.question}
+                onChange={(e) => setQuizData({ ...quizData, question: e.target.value })}
+                className="mb-4 mt-2"
+              />
+              {quizData.options.map((option, index) => (
+                <div key={index} className="gap-5">
+                  <TextInput
+                    type="text"
+                    placeholder={`Option ${index + 1}`}
+                    value={option}
+                    onChange={(e) => handleOptionChange(index, e.target.value)}
+                    className="m-3"
+                  />
+                  <input
+                    type="radio"
+                    name="correctAnswer"
+                    checked={quizData.correctAnswerIndex === index}
+                    onChange={() => handleCorrectAnswerChange(index)}
+                  />
+                  <label className="m-3">Correct Answer</label>
+                </div>
+              ))}
+              <Button onClick={handleAddQuiz} className="my-4">Save Quiz</Button>
+            </div>
+          )}
+        </div>
 
         {currentUser.isAdmin ? (
           <Button type="submit" gradientDuoTone="cyanToBlue">
@@ -632,10 +930,14 @@ export default function CreatePost() {
           </Button>
         )}
         {publishError && (
-          <Alert className="mt-5" color="failure">
-            {publishError}
-          </Alert>
+          <>
+            {console.log(publishError)}
+            <Alert className="mt-5" color="failure">
+              {publishError}
+            </Alert>
+          </>
         )}
+
       </form>
     </div>
   );
