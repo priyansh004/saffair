@@ -1,6 +1,33 @@
 const mongoose = require("mongoose");
 
+const data = new mongoose.Schema({
+  userId: {
+    type: String,
+    required: true,
+  },
 
+  title: {
+    type: String,
+    // required: true,
+    // maxlength: 100,
+  },
+  image1: {
+    type: String,
+  },
+  image2: {
+    type: String,
+  },
+  image3: {
+    type: String,
+  },
+  content: {
+    type: String,
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
 const eventSchema = mongoose.Schema(
   {
@@ -19,7 +46,7 @@ const eventSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    // eventEntries: [data],
+    eventEntries: [data],
     startDate: {
       type: Date,
       // required: true,
