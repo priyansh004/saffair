@@ -4,6 +4,8 @@ import {
   faSquareFacebook,
   faSquareInstagram,
   faSquareXTwitter,
+  faLinkedin,
+  faSquareYoutube
 } from "@fortawesome/free-brands-svg-icons";
 import { Link } from "react-router-dom";
 const img = "./assets/logofooter.png";
@@ -24,21 +26,39 @@ export default function Home() {
         <div className="f1">
           <div className="f2">
             <ul className="foot1">
-              <p>Learn More</p>
-              <li>Environment</li>
-              <li>Jobs</li>
-              <Link to="/privacypolicy">
+              <Link to="/events">
                 <a className="centerItem1" onClick={scrollToTop}>
-                  Privacy Policy
+                  Campaigns
                 </a>
               </Link>
-<br/>
+              <br />
+              <Link to="/blog">
+                <a className="centerItem1" onClick={scrollToTop}>
+                  Blogs
+                </a>
+              </Link>
+              <br />
+
+              <Link to="/news">
+                <a className="centerItem1" onClick={scrollToTop}>
+                  News
+                </a>
+              </Link>
+              <br />
+
+              <Link to="/Update">
+                <a className="centerItem1" onClick={scrollToTop}>
+                  Updates
+                </a>
+              </Link>
+              <br />
+
               <Link to="/contactus">
                 <a className="centerItem1" onClick={scrollToTop}>
                   Contact Us
                 </a>
               </Link>
-              <br/>
+              <br />
               <Link to="/aboutus">
                 <a className="centerItem1" onClick={scrollToTop}>
                   About Us
@@ -47,30 +67,64 @@ export default function Home() {
             </ul>
             <ul className="foot2">
               <p>Products</p>
-              <li>Sell products on Amazon</li>
-              <li>Sell on Amazon Business</li>
-              <li>Sell apps on Amazon</li>
-              <li>Become an Affiliate</li>
-              <li>Advertise Your Products</li>
+              <Link to="/product">
+                <a className="centerItem1" onClick={scrollToTop}>
+                  Sell products on Amazon
+                </a>
+              </Link>
+              <br />
+              <Link to="/product">
+                <a className="centerItem1" onClick={scrollToTop}>
+                  Sell on Amazon Business                </a>
+              </Link>
+              <br />
+              <Link to="/product">
+                <a className="centerItem1" onClick={scrollToTop}>
+                  Sell apps on Amazon
+                </a>
+              </Link>
+              <br />
+              <Link to="/product">
+                <a className="centerItem1" onClick={scrollToTop}>
+                  Become an Affiliate                </a>
+              </Link>
+              <br />
+              <Link to="/product">
+                <a className="centerItem1" onClick={scrollToTop}>
+                  Advertise Your Products                </a>
+              </Link>
+
             </ul>
           </div>
           <div className="f3">
             <ul className="foot3">
               <p>Contact us</p>
-              <li>+91 989889889 </li>
-              <li>support@saffair.in</li>
+              <a href="tel:+91989889889">
+                <li>+91 989889889</li>
+              </a>
+              <a href="mailto:support@saffair.in">
+                <li>support@saffair.in</li>
+              </a>
             </ul>
             <ul className="social">
-              <p>Social</p>
+              <p className="text-align">Socials</p>
               <div className="socialapp">
-                <a href="#" className="icon1">
+                <a href="https://www.facebook.com/share/sYCKRUGcdDQR8exy/?mibextid=LQQJ4d" target="blank" className="icon1">
                   <FontAwesomeIcon icon={faSquareFacebook} />
                 </a>
-                <a href="#" className="icon1">
+                <a href="https://www.instagram.com/saff_air?igsh=OWo5bm9lY2dud2t2&utm_source=qr" className="icon1" target="_blank">
                   <FontAwesomeIcon icon={faSquareInstagram} />
                 </a>
-                <a href="#" className="icon1">
+
+
+                <a href="https://x.com/saff_air?s=21&t=vaXYQmjylPtSS4rtdTueDQ" target="blank" className="icon1">
                   <FontAwesomeIcon icon={faSquareXTwitter} />
+                </a>
+                <a href="https://www.linkedin.com/company/saffair/" target="blank" className="icon1">
+                  <FontAwesomeIcon icon={faLinkedin} />
+                </a>
+                <a href="https://www.youtube.com/@Saffair-india" target="blank" className="icon1">
+                  <FontAwesomeIcon icon={faSquareYoutube} />
                 </a>
               </div>
               <div className="playstore">
@@ -94,7 +148,7 @@ export default function Home() {
           <a href="">Your Ads Privacy Choices</a>
         </div>
         <div className="copyright">
-        <Link to="https://agevole.in/" target="_blank">  ©2024 Saffair All rights reserved | Design and Developed by Agevole Innovatio </Link>
+          <Link to="https://agevole.in/" target="_blank">  ©2024 Saffair All rights reserved | Design and Developed by Agevole Innovatio </Link>
         </div>
       </div>
     </footer>

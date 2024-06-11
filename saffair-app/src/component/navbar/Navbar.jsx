@@ -133,7 +133,18 @@ export default function Navbar({ _id }) {
     })
   }
   const [activeLink, setActiveLink] = useState('');
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  let timer;
+  const handleMouseEnter = () => {
+    clearTimeout(timer);
+    setIsDropdownVisible(true);
+  };
 
+  const handleMouseLeave = () => {
+    timer = setTimeout(() => {
+      setIsDropdownVisible(false);
+    }, 300); // Adjust the delay as needed
+  };
   return (
     <div
       // className={`navbarContainer fixed top-0 ${isScrolled ? "scrolled" : ""}`}
@@ -141,12 +152,15 @@ export default function Navbar({ _id }) {
     >
       <div className="leftNevbar flex flex-row justify-center items-center">
         <div className="logoContainer">
-          <img
-            className="logoNevbar"
-            src="./assets/transperent logo 1.svg"
-            alt="logo"
-          />
+          <Link to="/" className='logoNevbar'>
+            <img
+              src="./assets/transperent logo 1.svg"
+              alt="logo"
+              className="logoImage"
+            />
+          </Link>
         </div>
+
         <div className="flex justify-center items-center space-x-4">
           <Link to="/" className="links">
             <a
@@ -163,49 +177,47 @@ export default function Navbar({ _id }) {
             Calculator
           </a>
 
-
-
-          <a className={`centerItem ${['blog', 'news', 'update'].includes(activeLink) ? 'active' : ''} lg:flex items-center gap-4`}>
-            <Dropdown
-              label="Readings"
-              size="2xl"
-              color="black"
-              fontSize="15px"
-              arrowIcon={false}
+          <div className="read relative ">
+            <Link
+              to="/news"
+              className={`centerItem ${activeLink === 'news'  ? 'active' : ''} relative  cursor-pointer`}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              onClick={() => handleClick('news')}
             >
-              <Link to="/blog" onClick={() => handleClick('/blog', 'blog')} className={`links ${activeLink === 'blog' ? 'active' : ''}`}>
-                <Dropdown.Item>Blogs</Dropdown.Item>
-              </Link>
-              <Link to="/news" onClick={() => handleClick('/news', 'news')} className={`links ${activeLink === 'news' ? 'active' : ''}`}>
-                <Dropdown.Item>News</Dropdown.Item>
-              </Link>
-              <Link to="/update" onClick={() => handleClick('/update', 'update')} className={`links ${activeLink === 'update' ? 'active' : ''}`}>
-                <Dropdown.Item>Updates</Dropdown.Item>
-              </Link>
-            </Dropdown>
-          </a>
-
-
-
-          {/* <div className="centerItem lg:flex items-center gap-4">
-            <Dropdown
-              label="Readings"
-              size="3xl"
-              color="black"
-              fontSize="15px"
-              arrowIcon={false}
+              Readings
+            </Link>
+            {/* Conditional rendering based on screen size */}
+            <div
+              className={` absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg transition-all duration-200 ${isDropdownVisible && window.innerWidth >= 957 ? 'block' : 'hidden'}`}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
             >
-              <Link to="/blog" className={`links ${activeLink === 'blog' ? 'active' : ''}`}>
-                <Dropdown.Item>Blogs</Dropdown.Item>
+              <Link
+                to="/blog"
+                onClick={() => handleClick('/blog', 'blog')}
+                className={`block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900`}
+              >
+                Blogs
               </Link>
-              <Link to="/news" className={`links ${activeLink === 'news' ? 'active' : ''}`}>
-                <Dropdown.Item>News</Dropdown.Item>
+              <Link
+                to="/news"
+                onClick={() => handleClick('/news', 'news')}
+                className={`block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900`}
+              >
+                News
               </Link>
-              <Link to="/update" className={`links ${activeLink === 'update' ? 'active' : ''}`}>
-                <Dropdown.Item>Updates</Dropdown.Item>
+              <Link
+                to="/update"
+                onClick={() => handleClick('/update', 'update')}
+                className={`block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-gray-900`}
+              >
+                Updates
               </Link>
-            </Dropdown>
-          </div> */}
+            </div>
+          </div>
+
+
 
           <Link to="/events">
             <a
@@ -354,7 +366,7 @@ export default function Navbar({ _id }) {
         <Link to="/searchpage" onClick={scrollToTop}>
           <FontAwesomeIcon icon={faMagnifyingGlass} className="searchIcon" />
         </Link>
-        <div className="menu">
+        <div className="menu ">
           <a href="#" id="dropdownLink" onClick={toggleDropdown}>
             <FontAwesomeIcon icon={faBars} />
           </a>
@@ -385,17 +397,38 @@ export default function Navbar({ _id }) {
             <a className="dropdown-item" href="#" onClick={toggleDropdown}>
               Calculator
             </a>
-            <Link to="/blog">
+            <Link to="/news">
               <a className="dropdown-item" href="#" onClick={toggleDropdown}>
-                Blog
+                Readings
               </a>
             </Link>
-            <a className="dropdown-item" href="#" onClick={toggleDropdown}>
-              News
-            </a>
-            <a className="dropdown-item" href="#" onClick={toggleDropdown}>
-              Join Community
-            </a>
+            <Link to="/events">
+              <a className="dropdown-item" href="#" onClick={toggleDropdown}>
+                campaigns
+              </a>
+            </Link>
+            <Link to="/aboutus">
+              <a className="dropdown-item" href="#" onClick={toggleDropdown}>
+                About us
+              </a>
+            </Link>
+            <Link to="/contactus">
+              <a className="dropdown-item" href="#" onClick={toggleDropdown}>
+                Contact us
+              </a>
+            </Link>
+            {currentUser ? (
+              // Render nothing if user is logged in
+              null
+            ) : (
+              // Render the link if user is not logged in
+              <Link to="/login">
+                <a className="dropdown-item" href="#" onClick={toggleDropdown}>
+                  Join Community
+                </a>
+              </Link>
+            )}
+
           </div>
         </div>
       </div>

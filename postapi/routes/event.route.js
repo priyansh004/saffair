@@ -17,6 +17,47 @@ router.post("/", async (req, res) => {
     return res.status(500).json(error);
   }
 });
+//interest
+router.put("/addInterest/:eventId/:userId", async (req, res) => {
+  try {
+    // Extract data from the request body with validation
+    const { response } = req.body;
+
+    // Find the event by its ID
+    const event = await Event.findById(req.params.eventId);
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    // Check if the user already has an interest in the event (optional, based on your logic)
+    const existingInterest = event.interest.find(
+      (interest) => interest.userId === req.params.userId
+    );
+
+    if (existingInterest) {
+      return res.status(400).json({ message: "User has already shown interest in the event" });
+    }
+
+    // Create a new interest object
+    const newInterest = {
+      userId: req.params.userId,
+      response,
+    };
+
+    // Add the new interest to the event's interests array
+    event.interest.push(newInterest);
+
+    // Save the updated event
+    await event.save();
+
+    // Send a response indicating success
+    res.status(201).json({ success: true });
+  } catch (error) {
+    console.log("Error adding interest to event:", error);
+    res.status(500).json({ message: "Failed to add interest to event" });
+  }
+});
 
 //update
 

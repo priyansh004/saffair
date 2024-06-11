@@ -406,8 +406,8 @@ return (
                 {errormessage ? <p className="not">City not found</p> : ""}
                 <div className="impdiv mt-4 pl-3">
                   <div className="twoparts">
-                    <div className="theaqi">
-                      <div className="charttag">AQI : {aqiValue}</div>
+                    <div className="theaqi flex flex-col justify-center">
+                      <div className="charttag ">AQI : {aqiValue}</div>
                       {/* <div className="charts">
                            <FontAwesomeIcon
                             icon={faChartSimple}

@@ -19,6 +19,7 @@ import '@react-pdf-viewer/core/lib/styles/index.css';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import PDFViewer from "./PDFViewer";
 import { Document, Page } from 'react-pdf';
+import { FaChevronDown } from 'react-icons/fa';
 
 export default function CreatePost() {
 
@@ -93,44 +94,12 @@ export default function CreatePost() {
     }
   };
 
-  /////////Tag adding functions
-
-
-  const [tags, setTags] = useState([]);
-  const [newTag, setNewTag] = useState('');
-
-  const handleChange = (e) => {
-    setNewTag(e.target.value);
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleTagAdd();
-    }
-  };
-
-  const handleTagAdd = () => {
-    if (newTag.trim() !== '' && tags.length < 3 && !tags.includes(newTag)) {
-      setTags([...tags, newTag]);
-      setNewTag('');
-      // Add the following line to update formData
-      setFormData({ ...formData, tags: [...tags, newTag] });
-    }
-  };
-
-  const handleTagRemove = (tagToRemove) => {
-    setTags(tags.filter(tag => tag !== tagToRemove));
-    // Add the following line to update formData
-    setFormData({ ...formData, tags: tags.filter(tag => tag !== tagToRemove) });
-  };
-
 
   /////////Documents upload functions
 
   const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
-    tags: [],
+    category: [],
   });
 
   const [file, setFile] = useState(null);
@@ -299,14 +268,6 @@ export default function CreatePost() {
     setDivVisible2(false);
   };
 
-  const [isDivVisible3, setDivVisible3] = useState(false);
-
-  const showDiv3 = () => {
-    setDivVisible3(true);
-  };
-  const hideDiv3 = () => {
-    setDivVisible3(false);
-  };
 
   useEffect(() => {
     // Fetch events from backend
@@ -336,77 +297,191 @@ export default function CreatePost() {
     return /\.(jpeg|jpg|gif|png)$/.test(url);
   };
 
+  const [inputCategory, setInputCategory] = useState('');
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const categories = [
+    'Uncategorized', 'Agriculture', 'Bollywood', 'Business', 'Crime',
+    'Economy', 'Education', 'Entertainment', 'Environment', 'Events',
+    'Fashion', 'Foreign', 'General', 'Health', 'Hollywood', 'International',
+    'Legal', 'Lifestyle', 'National', 'Politics', 'Religious', 'Science',
+    'Sports', 'Stock Market', 'Technology', 'Weather'
+  ];
+
+  const addCategory = (category) => {
+    if (formData.category.length < 5 && !formData.category.includes(category)) {
+      setFormData(prevFormData => ({ ...prevFormData, category: [...prevFormData.category, category] }));
+    }
+  };
+
+  const removeCategory = (category) => {
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      category: prevFormData.category.filter(cat => cat !== category)
+    }));
+  };
+
+  const handleOtherCategoryChange = (e) => {
+    setInputCategory(e.target.value);
+  };
+
+  const handleAddOtherCategory = () => {
+    const lowerCaseInputCategory = inputCategory.toLowerCase();
+    const otherVariations = ['other', 'othr', 'othar', 'othr'];
+
+    if (!otherVariations.includes(lowerCaseInputCategory) && !formData.category.includes(inputCategory)) {
+      addCategory(inputCategory);
+      setInputCategory('');
+    }
+  };
+
+  const handleCategoryClick = (category) => {
+    if (formData.category.includes(category)) {
+      removeCategory(category);
+    } else {
+      addCategory(category);
+    }
+  };
+  const click = () => {
+    console.log(formData)
+  }
+  const [other,setOther] = useState(false)
+  const addother = () =>{
+    setOther(true)
+  }
   return (
     <div className="mb-6 p-3 max-w-3xl mx-auto mt-8 min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">
         Create A Readings
       </h1>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-        <label htmlFor="Select reading type" className="block text-sm font-medium text-gray-700">
-          Select reading type
+        {currentUser.isAdmin && (
+          <>
+            <label htmlFor="Select reading type" className="block text-sm font-medium text-gray-700">
+              Select reading type
+            </label>
+            <Select
+              onChange={(e) =>
+                setFormData({ ...formData, readingType: e.target.value })
+              }
+            >
+              <option value="Blog">Blog</option>
+              <option value="News">News</option>
+              <option value="Update">Update</option>
+            </Select>
+          </>
+        )}
+        <label htmlFor="Select Contribution type" className="block text-sm font-medium text-gray-700">
+          Select Contribution type
         </label>
         <Select
 
           onChange={(e) =>
-            setFormData({ ...formData, readingType: e.target.value })
+            setFormData({ ...formData, contributionType: e.target.value })
           }
         >
-          <option value="Blog">Blog</option>
-          <option value="News">News</option>
-          <option value="Update">Update</option>
+          <option value="News / Update">News / Update</option>
           <option value="Legal Updates">Legal Updates</option>
           <option value="innovation">innovation</option>
           <option value="get your voice bigger with community">get your voice bigger with community</option>
           <option value="suggest a reforms">suggest a reforms</option>
-          <option value="campaign">join our campaigns</option>
-          <option value="Donate/Sponser">Donate/Sponser</option>
+          <option value="join our campaigns">join our campaigns</option>
+          <option value="Donate / Sponser">Donate / Sponser</option>
           <option value="Get outdoor Air Analyzer">Get outdoor Air Analyzer</option>
-          <option value="Need Community Support/Suggestions/Survey">Need Community Support/Suggestions/Survey</option>
+          <option value="Need Community Support / Suggestions / Survey<">Need Community Support / Suggestions / Survey</option>
         </Select>
-
         <div className="mb-4">
           <label htmlFor="category" className="block text-sm font-medium text-gray-700">
-            Category
+            {formData.otherCategory ? formData.otherCategory : "Category"}
           </label>
-          <select
-            id="category"
-            name="category"
-            value={formData.category}
-            onChange={(e) =>
-              setFormData({ ...formData, category: e.target.value })
-            }
-            className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          >
-            <option value="uncategorized">Uncategorized</option>
-            <option value="agriculture">Agriculture</option>
-            <option value="bollywood">Bollywood</option>
-            <option value="business">Business</option>
-            <option value="crime">Crime</option>
-            <option value="economy">Economy</option>
-            <option value="education">Education</option>
-            <option value="entertainment">Entertainment</option>
-            <option value="environment">Environment</option>
-            <option value="events">Events</option>
-            <option value="fashion">Fashion</option>
-            <option value="foreign">Foreign</option>
-            <option value="general">General</option>
-            <option value="health">Health</option>
-            <option value="hollywood">Hollywood</option>
-            <option value="international">International</option>
-            <option value="legal">Legal</option>
-            <option value="lifestyle">Lifestyle</option>
-            <option value="national">National</option>
-            <option value="politics">Politics</option>
-            <option value="religious">Religious</option>
-            <option value="science">Science</option>
-            <option value="sports">Sports</option>
-            <option value="stock market">Stock Market</option>
-            <option value="technology">Technology</option>
-            <option value="weather">Weather</option>
-            <option value="other">Other</option>
-          </select>
+          <div>
+            <div className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm">
+              <span className="text-sm text-center">{formData.otherCategory ? formData.otherCategory : "Selected category :"}</span>
+
+              <div className="flex flex-wrap">
+
+                {formData.category.map((cat, index) => (
+                  <div key={index} className="flex items-center m-1 p-2 bg-blue-100 text-blue-600 rounded-full shadow-sm">
+                    <span className="font-medium">{cat}</span>
+
+                    <button
+                      type="button"
+                      className="ml-2 text-red-600 hover:text-red-800"
+                      onClick={() => handleCategoryClick(cat)}
+                    >
+
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+            </div>
+            <div className="my-4 flex flex-col md:flex-row md:justify-between w-full">
+              <div className="relative md:w-screen mt-4 md:mt-0">
+                <button
+                  type="button"
+                  onClick={() => setDropdownVisible(!dropdownVisible)}
+                  className="mt-1 block w-full py-3 px-4 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-[#1ec2f4] focus:border-[#1ec2f4] sm:text-base md:text-sm flex items-center justify-between"
+                >
+                  <span>{formData.otherCategory ? formData.otherCategory : "Show category (max 5)"}</span>
+                  <FaChevronDown className="w-4 h-4" />
+                </button>
+                {dropdownVisible && (
+                  <div className="absolute z-10 mt-1 w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-lg">
+                    <div className="flex flex-wrap">
+                      {categories.map((category) => (
+                        <div
+                          key={category}
+                          className="flex items-center m-1 p-2 bg-gray-100 rounded cursor-pointer hover:bg-gray-200"
+                          onClick={() => handleCategoryClick(category.toLowerCase())}
+                        >
+                          <span>{category}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+              {!other && <Button  gradientDuoTone="cyanToBlue" onClick={addother}className="mt-4  md:mt-0 md:ml-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              Other 
+              </Button>}
+              
+            </div>
+
+
+
+          </div>
+
+          {other && (
+            <div className="">
+              <label htmlFor="otherCategory" className="block text-sm font-medium text-gray-700">
+                {formData.otherCategory ? formData.otherCategory : "Other Category"}
+              </label>
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  id="otherCategory"
+                  name="otherCategory"
+                  value={inputCategory}
+                  onChange={handleOtherCategoryChange}
+                  className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                />
+                <Button
+                  type="button"
+                  className="ml-2 "
+                  onClick={handleAddOtherCategory}
+                    gradientDuoTone="cyanToBlue"
+                >
+                  Add
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
-        {formData.readingType === "campaign" ? (
+        <button onClick={click}>clikc me</button>
+        {formData.contributionType === "join our campaigns" ? (
           <div className="conditional-div gap-4">
             {/* Conditional div content for campaign */}
             <div>
@@ -436,7 +511,7 @@ export default function CreatePost() {
                 placeholder="Title"
                 required
                 id="title"
-                className="flex-1"
+                className="flex-1 my-2 "
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
                 }
@@ -493,7 +568,7 @@ export default function CreatePost() {
 
 
                 {!isDivVisible2 && (
-                  <Button onClick={showDiv2} gradientDuoTone="cyanToBlue" className=" text-white my-2 py-2 px-4 rounded">add more</Button>
+                  <Button onClick={showDiv2} gradientDuoTone="cyanToBlue" className=" text-white my-2 py-2 px-4 rounded">Add more</Button>
                 )}
                 {isDivVisible2 && (
                   <div>
@@ -539,53 +614,7 @@ export default function CreatePost() {
                 )}
 
 
-                {/* 
-                {!isDivVisible3 && (
-
-                  <Button onClick={showDiv3} gradientDuoTone="cyanToBlue" className=" text-white my-2 py-2 px-4 rounded">add third document</Button>
-                )}
-                {isDivVisible2 && (
-                  <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
-                    <FileInput
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => setFile(e.target.files[0])}
-                    />
-                    <Button
-                      type="button"
-                      gradientDuoTone="cyanToBlue"
-                      size="sm"
-                      outline
-                      onClick={() => handleImageORDocument(3)}
-                      disabled={imageUploadProgress}
-                    >
-                      {imageUploadProgress ? (
-                        <div className="w-16 h-16">
-                          <CircularProgressbar
-                            value={imageUploadProgress}
-                            text={`${imageUploadProgress || 0}%`}
-                          />
-                        </div>
-                      ) : (
-                        "Upload Image 3"
-                      )}
-                    </Button>
-                    <Button onClick={hideDiv3}>Remove</Button>
-
-                  </div>
-                )} */}
-
-{/* 
-                {imageUploadError && (
-                  <Alert color="failure">{imageUploadError}</Alert>
-                )}
-                {formData.image3 && (
-                  <img
-                    src={formData.image3}
-                    alt="upload"
-                    className="w-full h-72 object-cover"
-                  />
-                )} */}
+                
 
 
               </div>
@@ -604,7 +633,7 @@ export default function CreatePost() {
                 placeholder="Title"
                 required
                 id="title"
-                className="flex-1"
+                className="flex-1 my-2"
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
                 }
@@ -640,7 +669,7 @@ export default function CreatePost() {
                 </Button>
               </div>
               {(documentUploadError || imageUploadError) && <Alert color="failure">{(documentUploadError || imageUploadError)}</Alert>}
-             
+
               {
                 (formData.image1) ? <img
                   src={formData.image1}
@@ -654,7 +683,7 @@ export default function CreatePost() {
                 </>
 
               }
-              
+
 
 
 
@@ -718,41 +747,7 @@ export default function CreatePost() {
               )}
 
 
-              {/* 
-                {!isDivVisible3 && (
-
-                  <Button onClick={showDiv3} gradientDuoTone="cyanToBlue" className=" text-white my-2 py-2 px-4 rounded">add third document</Button>
-                )}
-                {isDivVisible2 && (
-                  <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
-                    <FileInput
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => setFile(e.target.files[0])}
-                    />
-                    <Button
-                      type="button"
-                      gradientDuoTone="cyanToBlue"
-                      size="sm"
-                      outline
-                      onClick={() => handleImageORDocument(3)}
-                      disabled={imageUploadProgress}
-                    >
-                      {imageUploadProgress ? (
-                        <div className="w-16 h-16">
-                          <CircularProgressbar
-                            value={imageUploadProgress}
-                            text={`${imageUploadProgress || 0}%`}
-                          />
-                        </div>
-                      ) : (
-                        "Upload Image 3"
-                      )}
-                    </Button>
-                    <Button onClick={hideDiv3}>Remove</Button>
-
-                  </div>
-                )} */}
+            
 
 
               {imageUploadError && (
@@ -772,14 +767,6 @@ export default function CreatePost() {
 
           </div>
         )}
-
-
-
-
-
-
-
-
 
         <ReactQuill
           theme="snow"
@@ -831,38 +818,10 @@ export default function CreatePost() {
         )}
 
 
-        <div className="flex flex-wrap items-center gap-2">
-          {tags.map((tag, index) => (
-            <div key={index} className="flex items-center bg-gray-200 rounded-full px-3 py-1">
-              <span>{tag}</span>
-              <button type="button" onClick={() => handleTagRemove(tag)} className="ml-1">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-red-600" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM6.707 6.707a1 1 0 00-1.414 1.414L8.586 10l-3.293 3.293a1 1 0 101.414 1.414L10 11.414l3.293 3.293a1 1 0 001.414-1.414L11.414 10l3.293-3.293a1 1 0 00-1.414-1.414L10 8.586 6.707 5.293z" clipRule="evenodd" />
-                </svg>
-              </button>
-            </div>
-          ))}
-          {tags.length < 3 && (
-            <div className="flex items-center bg-gray-200 rounded-full px-3 py-1">
-              <input
-                type="text"
-                value={newTag}
-                onChange={handleChange}
-                onKeyDown={handleKeyDown}
-                className="bg-transparent border-none focus:outline-none"
-                placeholder="Add tag"
-              />
-              <button type="button" onClick={handleTagAdd}>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-600" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 9V5a1 1 0 012 0v4h4a1 1 0 010 2h-4v4a1 1 0 01-2 0v-4H5a1 1 0 010-2h4z" clipRule="evenodd" />
-                </svg>
-              </button>
-            </div>
-          )}
-        </div>
 
 
-        <div>
+        {currentUser.isAdmin ? (
+          <div>
           <Button gradientDuoTone="cyanToBlue" onClick={() => setQuizVisible(!quizVisible)} className="my-4">
             {quizVisible ? 'Hide Quiz Form' : 'Add Quiz'}
           </Button>
@@ -901,6 +860,10 @@ export default function CreatePost() {
             </div>
           )}
         </div>
+        ):(
+          <></>
+        )}
+        
 
         {currentUser.isAdmin ? (
           <Button type="submit" gradientDuoTone="cyanToBlue">

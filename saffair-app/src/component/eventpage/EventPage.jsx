@@ -103,7 +103,7 @@ export default function EventPage() {
           },
           credentials: "include",
           body: JSON.stringify(formData),
-          
+
         }
       );
       const data = await res.json();
@@ -139,6 +139,63 @@ export default function EventPage() {
     setLinks(updatedLinks);
   };
 
+  const [selectedOption, setSelectedOption] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
+
+
+
+  const handleButtonClick = async (option) => {
+    try {
+      setLoading(true);
+      setMessage('');
+
+      var response = option
+
+      const eventId = 'your_event_id'; // Replace with actual event ID
+      const userId = 'your_user_id'; // Replace with actual user ID
+
+      await addInterest(eventId, userId, response);
+      setMessage('Interest added successfully!');
+    } catch (error) {
+      console.error('Failed to add interest:', error);
+      setMessage('Failed to add interest. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+    // Add your logic here to handle the selected option
+  };
+
+  const addInterest = async (response) => {
+    try {
+      const formData = {
+        response: response
+      };
+
+      const res = await fetch(
+        `http://localhost:6600/api/events/addInterest/${id}/${currentUser._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error(`Failed to add interest to event: ${res.statusText}`);
+      }
+
+      return await res.json();
+    } catch (error) {
+      console.error('Error adding interest to event:', error);
+      throw error;
+    }
+  };
+
 
   return (
     <>
@@ -154,8 +211,51 @@ export default function EventPage() {
               dangerouslySetInnerHTML={{ __html: eventInfo.eventDescription }}
             />
 
+            <div className="flex flex-col justify-between items-center  m-8">
 
-            <div className="p-3 max-w-3xl mx-auto mt-8 min-h-screen">
+              <div>
+                <h1 className="text-center text-3xl my-7 font-semibold">
+                  Are you willing to join?
+                </h1>
+                <div className="flex justify-center mt-4 space-x-4">
+                  <button
+                    onClick={() => addInterest("y")}
+                    className={`${selectedOption === "Yes" ? "bg-green-800" : "bg-green-200 hover:bg-green-600"
+                      } text-white font-bold py-2 px-4 rounded transition duration-300`}
+                  >
+                    Yes
+                  </button>
+                  <button
+                    onClick={() => addInterest("n")}
+                    className={`${selectedOption === "No" ? "bg-red-800" : "bg-red-200 hover:bg-red-600"
+                      } text-white font-bold py-2 px-4 rounded transition duration-300`}
+                  >
+                    No
+                  </button>
+                  <button
+                    onClick={() => addInterest("m")}
+                    className={`${selectedOption === "Maybe" ? "bg-blue-800" : "bg-blue-200 hover:bg-blue-600"
+                      } text-white font-bold py-2 px-4 rounded transition duration-300`}
+                  >
+                    Maybe
+                  </button>
+                </div>
+              </div>
+            </div>
+
+
+
+          </>
+        ) : (
+          <p>Loading...</p>
+        )}
+      </div>
+    </>
+  );
+}
+
+
+/*<div className="p-3 max-w-3xl mx-auto mt-8 min-h-screen">
 
               <h1 className="text-center text-3xl my-7 font-semibold">
                 Let's Participate
@@ -358,12 +458,4 @@ export default function EventPage() {
                   </Alert>
                 )}
               </form>
-            </div>
-          </>
-        ) : (
-          <p>Loading...</p>
-        )}
-      </div>
-    </>
-  );
-}
+            </div>*/

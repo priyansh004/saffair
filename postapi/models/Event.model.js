@@ -29,6 +29,17 @@ const data = new mongoose.Schema({
   },
 });
 
+const interestSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+    required: true,
+  },
+  response: {
+    type: String,
+    enum: ['y', 'n', 'm'],
+    required: true
+  }
+});
 const eventSchema = mongoose.Schema(
   {
     // userId: {
@@ -55,15 +66,9 @@ const eventSchema = mongoose.Schema(
       type: Date,
       // required: true,
     },
-    yes:{
-      type:Number,
-    },
-    no:{
-      type:Number,
-    },
-    maybe:{
-      type:Number,
-    },
+    interest: [interestSchema], // Array of user interests
+
+    
     link1:{
       type:String,
     },

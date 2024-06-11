@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { type } = require("os");
 const Schema = mongoose.Schema;
 
 const CoinHistorySchema = new Schema({
@@ -108,55 +109,56 @@ const UsersSchema = new Schema(
     linkedin: {
       type: String,
     },
-    showEducationWork: {
-      type: Boolean,
-      default: false,
-    },
-    instituteName: {
-      type: String,
-    },
-    degree: {
-      type: String,
-    },
-    fieldOfStudy: {
-      type: String,
-    },
-    grade: {
-      type: String,
-    },
-    startDate: {
-      type: String,
-    },
-    endDate: {
-      type: String,
-    },
-    position: {
-      type: String,
-    },
-    companyName: {
-      type: String,
-    },
-    employmentType: {
-      type: String,
-    },
-    companyCountry: {
-      type: String,
-    },
-    companyCity: {
-      type: String,
-    },
-    companyState: {
-      type: String,
-    },
-    companyPincode: {
-      type: String,
-    },
-    companyJoiningDate: {
-      type: String,
-    },
-    companyEndDate: {
-      type: String,
-    },
+    education: [{
+      instituteName: {
+        type: String,
+      },
+      degree: {
+        type: String,
+      },
+      fieldOfStudy: {
+        type: String,
+      },
+      grade: {
+        type: String,
+      },
+      startDate: {
+        type: String,
+      },
+      endDate: {
+        type: String,
+      }
+    }],
+    work:[{
+      position: {
+        type: String,
+      },
+      companyName: {
+        type: String,
+      },
+      companyField:{
+        type: String,
+      },
+      employmentType: {
+        type: String,
+      },
+      companyCity: {
+        type: String,
+      },
+      companyState: {
+        type: String,
+      },
+      companyPincode: {
+        type: String,
+      },
+      companyJoiningDate: {
+        type: String,
+      },
+      companyEndDate: {
+        type: String,
+      },
+    }]
+    
   },
   { timestamps: true }
 );

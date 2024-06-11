@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { useState } from 'react';
 
 export default function Post({
-  tags,
   _id,
   title,
   createdAt,
@@ -13,6 +12,7 @@ export default function Post({
   bookmark,
   content,
   category,
+  readingType,
   slug,
 }) {
   const { currentUser } = useSelector((state) => state.user);
@@ -63,7 +63,7 @@ export default function Post({
             </div>
           </Link>
           <div className="card__body flex flex-col justify-evenly">
-            <span className="tag text-blue-900 text-[14px]"> {category}</span>
+            <span className="tag text-blue-900 text-[14px]"> {readingType}</span>
             <Link to={`/post/${_id}`} className="link">
               <div className="postTitle">
                 <h5 className="text-[20px]">{title}</h5>
@@ -71,10 +71,9 @@ export default function Post({
               </div>
             </Link>
             <div className="flex flex-row gap-3">
-            <p className="text-blue-500">tags:</p>
             <div className="flex flex-row gap-2">
-              {tags.map((tag, index) => (
-                <span key={index} className=""><p className="tag text-blue-600 text-[12px]">{tag}</p></span>
+              {category.map((tag, index) => (
+                <span key={index} className=""><p className="tag text-blue-600 text-[12px]">{category}</p></span>
               ))}
             </div>
             </div>

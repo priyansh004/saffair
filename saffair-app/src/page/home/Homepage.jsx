@@ -34,10 +34,11 @@ export default function Homepage() {
         <WeatherUpdate />
         {/* <Healthadvice /> */}
 
-        <div>
+        <div className="">
+          
           <Vision />
         </div>
-        <div>
+        <div className="">
           <Event />
         </div>
         <div>

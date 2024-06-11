@@ -379,7 +379,7 @@
     font-size: 120%;
     font-weight: 600;
     color: white;
-    text-align: left;
+    text-align: center;
     margin-left: 50px;
   }
 
@@ -537,7 +537,7 @@
 
   .thetag,
   .charttag {
-    font-size: 20px;
+    font-size: 25px;
   }
   .sgrid {
     padding-bottom: 0;
@@ -568,7 +568,7 @@
   }
   .charttag,
   .thetag {
-    font-size: 15px;
+    font-size: 30px;
   }
   .sgrid {
     margin-left: -15px;

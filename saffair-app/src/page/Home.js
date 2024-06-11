@@ -30,7 +30,7 @@ import EditContributorPost from "./blog/pages/editpost/EditContributorPost";
 import UserContribution from "../component/userContribution/UserContribution";
 import EventPage from "../component/eventpage/EventPage";
 import Events from "../component/homepageComponent/Event/Events"
-
+import ProductPage from "./product/ProductPage"
 // import { Discuss } from "react-loader-spinner";
 
 export const WeatherImageContext = createContext();
@@ -76,6 +76,7 @@ export default function Home() {
                 <Route path="/post/:id" element={<PostPage />} />
                 <Route path="/events/:id" element={<EventPage />} />
                 <Route path="/events" element={<Events />} />
+                <Route path="/product" element={<ProductPage />} />
                 {/* </div> */}
                 <Route path="/airquality" element={<AirQuality />} />
                 <Route path="/community" element={<Community />} />

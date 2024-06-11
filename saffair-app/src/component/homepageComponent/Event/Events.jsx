@@ -54,15 +54,7 @@ const Events = () => {
       });
     }
   };
-  const [selectedOption, setSelectedOption] = useState(null);
-
-  if (loading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
-  }
-  const handleButtonClick = (response) => {
-    console.log("User selected:", response);
-    setSelectedOption(response);
-  };
+ 
   const handleButtonClick1 = (id, arg) => {
     navigate(`/events/${id}`);
   };
@@ -86,40 +78,7 @@ const Events = () => {
                   >
                     Details
                   </Link></div>
-                <div className="flex flex-col justify-between items-center">
 
-                  <div>
-                    <h1 className="text-center text-3xl my-7 font-semibold">
-                      Are you willing to join?</h1>
-                    <div className="flex justify-center mt-4 space-x-4">
-                      <button
-                        onClick={() => handleButtonClick1(event._id)}
-                        className={`${selectedOption === "Yes"
-                          ? "bg-green-800"
-                          : "bg-green-200 hover:bg-green-600"
-                          } text-white font-bold py-2 px-4 rounded transition duration-300`}
-                      >
-                        Yes
-                      </button>
-                      <button
-                        onClick={() => handleButtonClick("No")}
-                        className={`${selectedOption === "No" ? "bg-red-800" : "bg-red-200 hover:bg-red-600"
-                          } text-white font-bold py-2 px-4 rounded transition duration-300`}
-                      >
-                        No
-                      </button>
-                      <button
-                        onClick={() => handleButtonClick("Maybe")}
-                        className={`${selectedOption === "Maybe"
-                          ? "bg-blue-800"
-                          : "bg-blue-200 hover:bg-blue-600"
-                          } text-white font-bold py-2 px-4 rounded transition duration-300`}
-                      >
-                        Maybe
-                      </button>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           ))}
