@@ -141,11 +141,9 @@ export default function PostPage() {
                   />
 
                   <div className="blurTitle glass">
-                    <div className="tagline">
-                      <p>{postInfo.category}</p>
-                    </div>
-                    <div className="tagsection">
-                      <time className="duration">
+                    
+                    <div className="tagsection ">
+                      <time className="duration ">
                         {" "}
                         On &nbsp;
                         {format(new Date(postInfo.createdAt), "MMMM dd, yyyy")}

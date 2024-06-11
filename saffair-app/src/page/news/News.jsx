@@ -6,7 +6,7 @@ import { Breadcrumb, Spinner, Tabs } from "flowbite-react";
 import { HiHome } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { Navbar, Button } from "flowbite-react";
-
+import Post  from "../blog/Post";
 import "./../../component/homepageComponent/weatherupdates/weatherupdate.css";
 
 export default function News() {
@@ -97,7 +97,7 @@ export default function News() {
             <div className="grid">
               <>
                 {posts.map((post) => (
-                  <NewsCon key={post._id} {...post} color="black" />
+                  <Post key={post._id} {...post} color="black" />
                 ))}
               </>
             </div>

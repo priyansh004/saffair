@@ -13,6 +13,8 @@ export default function Post({
   content,
   category,
   readingType,
+  contributionType,
+  updatedAt,
   slug,
 }) {
   const { currentUser } = useSelector((state) => state.user);
@@ -63,7 +65,7 @@ export default function Post({
             </div>
           </Link>
           <div className="card__body flex flex-col justify-evenly">
-            <span className="tag text-blue-900 text-[14px]"> {readingType}</span>
+            <span className="tag text-blue-900 text-[14px]">{readingType}</span>
             <Link to={`/post/${_id}`} className="link">
               <div className="postTitle">
                 <h5 className="text-[20px]">{title}</h5>
@@ -71,36 +73,20 @@ export default function Post({
               </div>
             </Link>
             <div className="flex flex-row gap-3">
-            <div className="flex flex-row gap-2">
-              {category.map((tag, index) => (
-                <span key={index} className=""><p className="tag text-blue-600 text-[12px]">{category}</p></span>
-              ))}
-            </div>
-            </div>
-            
-
-
-
-          </div>
-            {/* <div className="user">
-              <img
-                src={currentUser.profilePicture}
-                alt="user__image"
-                className="user__image"
-              />
-              <div className="user__info">
-                <h6>{currentUser.username}</h6>
-                <small>
-                  <time>{format(new Date(createdAt), "MMMM dd, yyyy")}</time>
-                </small>
+              <div className="flex flex-wrap gap-2">
+                {category.map((tag, index) => (
+                  <div key={index} className="flex items-center">
+                    <p className="tag text-blue-600 text-[14px]">&bull; {tag}</p>
+                    {/* <span className="text-gray-400 text-[12px]">&bull;</span>
+                    <span className="text-blue-600 text-[12px]">{tag}</span> */}
+                  </div>
+                ))}
               </div>
-
-
-            </div> */}
-            {/* Conditionally render user information if currentUser exists */}
-
+            </div>
+          </div>
         </div>
       </div>
+
     </>
   );
 }

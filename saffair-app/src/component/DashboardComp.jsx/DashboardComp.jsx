@@ -75,7 +75,7 @@ export default function DashboardComp() {
   }, [currentUser]);
   return (
     <div className="p-3 md:mx-auto">
-      <div className="flex-row flex gap-10 justify-center">
+      <div className="flex-col md:flex-row flex gap-10 justify-center">
         <div className="flex justify-between flex-col p-5 dark:bg-slate-800 gap-4 md:w-72 w-full rounded-md shadow-md">
           <div className="flex justify-between">
             <div className="">
@@ -150,10 +150,10 @@ export default function DashboardComp() {
           <div className="flex justify-between  p-3 text-sm font-semibold">
             <h1 className="text-center p-2">Recent users</h1>
             <Link to={"/dashboard?tab=users"}>
-            <Button  gradientDuoTone="cyanToBlue"
-                  outline >
-              See all
-            </Button></Link>
+              <Button gradientDuoTone="cyanToBlue"
+                outline >
+                See all
+              </Button></Link>
           </div>
           <Table hoverable>
             <Table.Head>
@@ -181,10 +181,10 @@ export default function DashboardComp() {
           <div className="flex justify-between  p-3 text-sm font-semibold">
             <h1 className="text-center p-2">Recent comments</h1>
             <Link to={"/dashboard?tab=comments"}>
-            <Button  gradientDuoTone="cyanToBlue"
-                  outline>
-             See all
-            </Button></Link>
+              <Button gradientDuoTone="cyanToBlue"
+                outline>
+                See all
+              </Button></Link>
           </div>
           <Table hoverable>
             <Table.Head>
@@ -205,38 +205,41 @@ export default function DashboardComp() {
           </Table>
         </div>
         <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md dark:bg-gray-800">
-          <div className="flex justify-between  p-3 text-sm font-semibold">
+          <div className="flex justify-between p-3 text-sm font-semibold">
             <h1 className="text-center p-2">Recent posts</h1>
             <Link to={"/dashboard?tab=posts"}>
-            <Button  gradientDuoTone="cyanToBlue"
-                  outline>
-              See all
-            </Button></Link>
+              <Button gradientDuoTone="cyanToBlue" outline>
+                See all
+              </Button>
+            </Link>
           </div>
-          <Table hoverable>
-            <Table.Head>
-              <Table.HeadCell>Post image</Table.HeadCell>
-              <Table.HeadCell>Post Title</Table.HeadCell>
-              <Table.HeadCell>Category</Table.HeadCell>
-            </Table.Head>
-            {posts &&
-              posts.map((post) => (
-                <Table.Body key={post._id} className="divide-y">
-                  <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                    <Table.Cell>
-                      <img
-                        src={post.image}
-                        alt="user"
-                        className="w-14 h-10 rounded-md bg-gray-500"
-                      />
-                    </Table.Cell>
-                    <Table.Cell className="w-96">{post.title}</Table.Cell>
-                    <Table.Cell className="w-5">{post.category}</Table.Cell>
-                  </Table.Row>
-                </Table.Body>
-              ))}
-          </Table>
+          <div className="overflow-x-auto">
+            <Table hoverable>
+              <Table.Head>
+                <Table.HeadCell>Post image</Table.HeadCell>
+                <Table.HeadCell>Post Title</Table.HeadCell>
+                <Table.HeadCell>Contribution type</Table.HeadCell>
+              </Table.Head>
+              {posts &&
+                posts.map((post) => (
+                  <Table.Body key={post._id} className="divide-y">
+                    <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                      <Table.Cell>
+                        <img
+                          src={post.image1}
+                          alt="user"
+                          className="w-14 h-10 rounded-md bg-gray-500"
+                        />
+                      </Table.Cell>
+                      <Table.Cell className="w-full md:w-96">{post.title}</Table.Cell>
+                      <Table.Cell className="w-25">{post.contributionType}</Table.Cell>
+                    </Table.Row>
+                  </Table.Body>
+                ))}
+            </Table>
+          </div>
         </div>
+
       </div>
     </div>
   );

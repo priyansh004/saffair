@@ -8,7 +8,7 @@ import { HiHome } from "react-icons/hi";
 
 import { Navbar,Button } from "flowbite-react";
 import { Link } from "react-router-dom";
-
+import Post from "../blog/Post";
 import "./../../component/homepageComponent/weatherupdates/weatherupdate.css";
 
 export default function Updates() {
@@ -99,7 +99,7 @@ export default function Updates() {
             <div className="grid">
               <>
                 {posts.map((post) => (
-                  <UpdatesCon key={post._id} {...post} color="black" />
+                  <Post key={post._id} {...post} color="black" />
                 ))}
               </>
             </div>

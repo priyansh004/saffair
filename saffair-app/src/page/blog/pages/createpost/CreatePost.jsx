@@ -480,7 +480,6 @@ export default function CreatePost() {
             </div>
           )}
         </div>
-        <button onClick={click}>clikc me</button>
         {formData.contributionType === "join our campaigns" ? (
           <div className="conditional-div gap-4">
             {/* Conditional div content for campaign */}
