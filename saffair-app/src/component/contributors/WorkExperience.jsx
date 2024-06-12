@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import Pincode from "react-pincode"
 const WorkExperience = ({ updateWorkExperienceData }) => {
   const [workExperienceDetails, setWorkExperienceDetails] = useState([
     {
@@ -38,7 +38,7 @@ const WorkExperience = ({ updateWorkExperienceData }) => {
     { value: "Research and Development", label: "Research and Development" },
     { value: "Product Management", label: "Product Management" },
   ];
-  
+
 
   const handleWorkExperienceChange = (e, index) => {
     const { name, value } = e.target;
@@ -74,6 +74,15 @@ const WorkExperience = ({ updateWorkExperienceData }) => {
   useEffect(() => {
     updateWorkExperienceData(workExperienceDetails);
   }, [workExperienceDetails, updateWorkExperienceData]);
+
+  const handlePincodeChange = (data, index) => {
+    const updatedDetails = [...workExperienceDetails];
+    updatedDetails[index].companyPincode = data.pincode;
+    updatedDetails[index].companyCity = data.city;
+    updatedDetails[index].companyState = data.stateName;
+    setWorkExperienceDetails(updatedDetails);
+  };
+
 
   const renderWorkExperienceFields = () => {
     return workExperienceDetails.map((work, index) => (
@@ -150,9 +159,29 @@ const WorkExperience = ({ updateWorkExperienceData }) => {
           </div>
         </div>
         <label className="block font-medium text-gray-700">Company Location</label>
-        <div className="grid grid-cols-1 md:grid-cols-4 sm:grid-cols-2 gap-4 mt-2 mb-2">
-          <div>
-            <label>
+        <div className="flex flex-col md:flex-row justify-start gap-4 mt-2 mb-2">
+          <div className="col-span-1">
+            <label className="block text-sm font-medium text-gray-700">
+              Pincode<span className="text-red-500 ml-1">*</span>
+            </label>
+            <Pincode
+              type="text"
+              name="companyPincode"
+              placeholder="Pincode"
+              value={work.companyPincode}
+              getData={(data) => handlePincodeChange(data, index)}
+              invalidError="Please check pincode"
+              lengthError="Check length"
+              showArea={false}
+              showState={false}
+              showDistrict={false}
+              showCity={false}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              required
+            />
+          </div>
+          <div className="col-span-1">
+            <label className="block text-sm font-medium text-gray-700">
               City<span className="text-red-500 ml-1">*</span>
             </label>
             <input
@@ -160,13 +189,13 @@ const WorkExperience = ({ updateWorkExperienceData }) => {
               name="companyCity"
               placeholder="City"
               value={work.companyCity}
-              onChange={(e) => handleWorkExperienceChange(e, index)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              readOnly
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-100"
               required
             />
           </div>
-          <div>
-            <label>
+          <div className="col-span-1">
+            <label className="block text-sm font-medium text-gray-700">
               State<span className="text-red-500 ml-1">*</span>
             </label>
             <input
@@ -174,26 +203,13 @@ const WorkExperience = ({ updateWorkExperienceData }) => {
               name="companyState"
               placeholder="State"
               value={work.companyState}
-              onChange={(e) => handleWorkExperienceChange(e, index)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              required
-            />
-          </div>
-          <div>
-            <label>
-              Pincode<span className="text-red-500 ml-1">*</span>
-            </label>
-            <input
-              type="text"
-              name="companyPincode"
-              placeholder="Pincode"
-              value={work.companyPincode}
-              onChange={(e) => handleWorkExperienceChange(e, index)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              readOnly
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-100"
               required
             />
           </div>
         </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-4">
           <div>
             <label>

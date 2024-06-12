@@ -136,7 +136,7 @@ const UsersSchema = new Schema(
       companyName: {
         type: String,
       },
-      companyField:{
+      fieldType:{
         type: String,
       },
       employmentType: {
