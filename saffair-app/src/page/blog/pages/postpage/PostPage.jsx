@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { format } from "date-fns";
 import "./postpage.css";
 import Share1 from "../../../../component/share1/Share1";
@@ -14,35 +14,29 @@ import BookMark from "../../../../component/bookmark/BookMark";
 import { useSelector } from "react-redux";
 import Qna from "../../../../component/QnA/Qna";
 import Ratings from "../../../../component/Ratings/Ratings";
-import "./../../component/homepageComponent/weatherupdates/weatherupdate.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBookmark, faBookmarkFill } from '@fortawesome/free-solid-svg-icons';
-
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { FaCheck, FaTimes } from 'react-icons/fa';
+import { faLink } from '@fortawesome/free-solid-svg-icons';
 //vvvvvvvvvv
 export default function PostPage() {
   const { currentUser } = useSelector((state) => state.user);
   const [postInfo, setPostInfo] = useState(null);
-  // const [postAdmin, setPostAdmin] = useState(null);
   const [posts, setPosts] = useState([]);
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
-  const [isBookmarked, setIsBookmarked] = useState("false");
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   useEffect(() => {
-    // Fetch posts from the server
-    // setLoading(true);
     fetch("http://localhost:6600/post")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch posts");
         }
         return response.json();
-      
       })
       .then((posts) => {
         setPosts(posts);
-        console.log(posts)
-        // setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching posts:", error);
@@ -50,7 +44,6 @@ export default function PostPage() {
   }, []);
 
   useEffect(() => {
-    // setLoading(true);
     fetch(`http://localhost:6600/post/${id}`)
       .then((response) => {
         if (!response.ok) {
@@ -71,7 +64,6 @@ export default function PostPage() {
         postInfo.content = modifiedContent;
         setPostInfo(postInfo);
         setLoading(false);
-        console.log(postInfo)
       })
       .catch((error) => {
         console.error("Error fetching post:", error);
@@ -89,7 +81,7 @@ export default function PostPage() {
       });
 
       if (response.ok) {
-        setIsBookmarked(!isBookmarked); // Toggle bookmark status locally if the request is successful
+        setIsBookmarked(!isBookmarked);
       } else {
         console.error("Failed to toggle bookmark status");
       }
@@ -99,6 +91,7 @@ export default function PostPage() {
   };
 
   if (!postInfo) return null;
+
   document.querySelectorAll(".feedback li").forEach((entry) =>
     entry.addEventListener("click", (e) => {
       if (!entry.classList.contains("active")) {
@@ -111,7 +104,6 @@ export default function PostPage() {
     })
   );
 
-
   return (
     <>
       <div style={{ Height: "800px" }}>
@@ -121,75 +113,107 @@ export default function PostPage() {
           </div>
         ) : (
           <div className="postMainPage">
-            <div className="postMainTopPage ">
+            <div className="postMainTopPage">
               <div className="blogContainer">
                 <div className="coverCon relative">
+
+                  <img
+                    src={postInfo.image1}
+                    className="postImg"
+                    alt="post img"
+                    style={{ objectFit: "cover" }}
+                  />
+                  <div className="blurTitle glass">
+                    <div className="tagsection">
+                      <time className="duration font-extrabold ">
+                        On {format(new Date(postInfo.createdAt), "MMMM dd, yyyy")}
+                      </time>
+                      <h1 className="posttitle font-extrabold">{postInfo.title}</h1>
+                    </div>
+                  </div>
+                  <div>
+                  </div>
+
+                </div>
+                <div className="my-3 flex flex-row justify-between items-center">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p>Categories : </p>
+                    {postInfo.category.map((cat, index) => (
+                      <div key={index} className="flex items-center m-1 p-2 bg-blue-100 text-[#2a758a] rounded-full shadow-sm">
+                        <span className="font-medium">{cat}</span>
+                      </div>
+                    ))}
+                  </div>
+
                   <div
                     style={{
-                      position: "absolute",
                       top: "2px",
                       right: "8px",
                       zIndex: "10",
                       fontSize: "35px",
                     }}
+                    className="self-align"
                   >
                     <BookMark post={postInfo} />
                   </div>
-                  <img
-                    src={postInfo.image1}
-                    className="postImg"
-                    alt="post img"
-                    srcSet=""
-                    style={{ objectFit: "cover" }}
-                  />
-
-                  <div className="blurTitle glass">
-                    
-                    <div className="tagsection ">
-                      <time className="duration ">
-                        {" "}
-                        On &nbsp;
-                        {format(new Date(postInfo.createdAt), "MMMM dd, yyyy")}
-                      </time>
-                      <h2 className="posttitle">{postInfo.title}</h2>
-                    </div>
+                </div>
+                <div className="otherhalf my-2  flex flex-col">
+                  <div className="mt-2 w-full flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
+                    {postInfo.image1 && (
+                      <a href={postInfo.image1} target="_blank" rel="noopener noreferrer" className="w-full md:w-1/2 h-72">
+                        <img
+                          src={postInfo.image1}
+                          alt="Image 1"
+                          className="w-full h-72 object-cover rounded-lg shadow-md transition-transform transform hover:scale-105"
+                        />
+                      </a>
+                    )}
+                    {postInfo.image2 && (
+                      <a href={postInfo.image2} target="_blank" rel="noopener noreferrer" className="w-full md:w-1/2 h-72">
+                        <img
+                          src={postInfo.image2}
+                          alt="Image 2"
+                          className="w-full h-72 object-cover rounded-lg shadow-md transition-transform transform hover:scale-105"
+                        />
+                      </a>
+                    )}
                   </div>
-                </div>
 
+                  <div className="postDataCon mt-2">
+                    <div
+                      className="post-content"
+                      dangerouslySetInnerHTML={{ __html: postInfo.content }}
+                    />
+                  </div>
+                  <div className="flex flex-warp mb-4 gap-4 items-start">
+                    {postInfo.link1 && (
+                      <a target="_blank" rel="noopener noreferrer" href={postInfo.link1} className="bg-blue-100 text-white font-bold py-2 px-4 rounded-full w-[100px] max-w-xs flex flex-row justify-center">
+                        <FontAwesomeIcon icon={faLink} className="w-6 h-6 text-blue-500" />
+                      </a>
+                    )}
+                    {postInfo.link2 && (
+                      <a target="_blank" rel="noopener noreferrer" href={postInfo.link2} className="bg-blue-100 text-white font-bold py-2 px-4 rounded-full w-[100px] max-w-xs flex flex-row justify-center">
+                        <FontAwesomeIcon icon={faLink} className="w-6 h-6 text-blue-500" />
+                      </a>
+                    )}
 
-
-                <div className="postDataCon">
-                  <div
-                    className="post-content"
-                    dangerouslySetInnerHTML={{ __html: postInfo.content }}
-                  />
-                  {/* {postInfo.content} */}
-                </div>
-{/* 
-                <button onClick={handleBookmarkToggle}>
-                  <FontAwesomeIcon className="ic" icon={isBookmarked ? faBookmark :  faBookmark} />
-                  <span>{isBookmarked ? "Bookmarked" : "Bookmark"}</span>
-                </button> */}
-
-
-                <div className="authInfo">
-                  <AdminInfo userId={postInfo.userId} />
-                  <Share2 />
-                </div>
-
-                <div>
-                  {/* <div>
-                  <Ratings />
-                </div> */}
-                  {/* <Qna
-                    que={postInfo.quizQuestion}
-                    options={postInfo.quizOptions}
-                    ans={postInfo.correctAnswer}
-                  /> */}
+                  </div>
+                  <div>
+                    {postInfo.quiz && postInfo.quiz.length > 0 ? (
+                      <Qna quiz={postInfo.quiz} />
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                  <div className="authInfo">
+                    <AdminInfo userId={postInfo.userId} />
+                    <Share2 />
+                  </div>
                   <div>
                     <CommentSection postId={postInfo._id} />
                   </div>
                 </div>
+
               </div>
               <div className="rightSide mt-6">
                 <div style={{ marginTop: "10px" }}>
@@ -205,6 +229,8 @@ export default function PostPage() {
                   <Post key={post._id} {...post} color="black" />
                 ))}
               </div>
+
+
             </div>
 
             <div className="bottomPost">
@@ -214,7 +240,7 @@ export default function PostPage() {
                   display: "flex",
                   alignItems: "center",
                   marginTop: "20px",
-                  marginBottom: "20PX",
+                  marginBottom: "20px",
                 }}
               >
                 <h2 className="text-2xl font-bold">Readings</h2>
@@ -228,15 +254,13 @@ export default function PostPage() {
                   }}
                 />
               </div>
-              <div className="cards-wrapper" id="style-5">
-                <div className="homeReadings">
-                  {posts && posts.length > 0 ? (
-                    posts.map((post) => <Post key={post._id} {...post} />)
-                  ) : (
-                    <p>No readings available</p>
-                  )}
-                </div>
-              </div>
+              <div class="cards-wrapper" id="style-5">
+            <div className="homeReadings">
+              {posts.map((post) => (
+                <Post key={post._id} {...post} color="black" />
+              ))}
+            </div>
+          </div>
             </div>
           </div>
         )}

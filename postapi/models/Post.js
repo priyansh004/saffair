@@ -60,7 +60,7 @@ const PostSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    bookmark: {
+    bookmarks: {
       type: Boolean,
       default: false,
     },

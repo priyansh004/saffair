@@ -522,6 +522,8 @@ body {
 }
 
 .post-content p {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
   color: black;
   font-weight: 500;
   font-size: 16px;
@@ -532,6 +534,8 @@ body {
 }
 
 .post-content h2 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
   font-family: "Raleway", sans-serif;
 }
 
@@ -573,24 +577,36 @@ body {
 .post-content h1 {
   font-size: 32px;
   font-weight: bold;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 .post-content h2 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
   font-size: 24px;
   font-weight: bold;
 }
 .post-content h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
   font-size: 18px;
   font-weight: bold;
 }
 .post-content h4 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
   font-size: 16px;
   font-weight: bold;
 }
 .post-content h5 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
   font-size: 14px;
   font-weight: bold;
 }
 .post-content h6 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
   font-size: 12px;
   font-weight: bold;
 }

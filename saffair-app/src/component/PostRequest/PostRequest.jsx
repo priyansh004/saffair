@@ -134,7 +134,7 @@ export default function PostRequest() {
                       />
                     </Link>
                   </Table.Cell>
-                  <Table.Cell>
+                  <Table.Cell className="text-center align-middle">
                     <Link
                       className="font-medium text-gray-900 dark:text-white"
                       to={`/post/${post._id}`}
@@ -142,8 +142,8 @@ export default function PostRequest() {
                       {post.title}
                     </Link>
                   </Table.Cell>
-                  <Table.Cell>{post.contributionType}</Table.Cell>
-                  <Table.Cell>
+                  <Table.Cell className="text-center align-middle">{post.contributionType}</Table.Cell>
+                  <Table.Cell className="text-center align-middle">
                     {post.coinalloted ? (
                       <div className="flex items-center gap-1">
                         <span className="ml-2">{post.coinalloted}</span>
@@ -161,9 +161,9 @@ export default function PostRequest() {
                   </Table.Cell>
 
 
-                  <Table.Cell>
+                  <Table.Cell className="text-center  align-middle">
                     {post.isReviewed ? (
-                      < div className="flex gap-2 flex-row">
+                      < div className="flex gap-2 flex-row ">
                         <FaCheck className="text-green-500" />
 
                       </div>
@@ -179,7 +179,7 @@ export default function PostRequest() {
                       </div>
                     )}
                   </Table.Cell>
-                  <Table.Cell>
+                  <Table.Cell className="text-center align-middle">
                     {post.publish ? (
                       < div className="flex gap-2 flex-row">
                         <FaCheck className="text-green-500" />
@@ -197,7 +197,7 @@ export default function PostRequest() {
                       </div>
                     )}
                   </Table.Cell>
-                  <Table.Cell>
+                  <Table.Cell className="text-center align-middle">
                     <span
                       onClick={() => {
                         setShowModal(true);
