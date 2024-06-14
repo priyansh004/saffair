@@ -344,8 +344,8 @@ export default function CreatePost() {
   const click = () => {
     console.log(formData)
   }
-  const [other,setOther] = useState(false)
-  const addother = () =>{
+  const [other, setOther] = useState(false)
+  const addother = () => {
     setOther(true)
   }
   return (
@@ -378,7 +378,9 @@ export default function CreatePost() {
           onChange={(e) =>
             setFormData({ ...formData, contributionType: e.target.value })
           }
+          required
         >
+          <option value="">select</option>
           <option value="News / Update">News / Update</option>
           <option value="Legal Updates">Legal Updates</option>
           <option value="innovation">innovation</option>
@@ -444,10 +446,10 @@ export default function CreatePost() {
                   </div>
                 )}
               </div>
-              {!other && <Button  gradientDuoTone="cyanToBlue" onClick={addother}className="mt-4  md:mt-0 md:ml-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              Other 
+              {!other && <Button gradientDuoTone="cyanToBlue" onClick={addother} className="mt-4  md:mt-0 md:ml-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Other
               </Button>}
-              
+
             </div>
 
 
@@ -472,7 +474,7 @@ export default function CreatePost() {
                   type="button"
                   className="ml-2 "
                   onClick={handleAddOtherCategory}
-                    gradientDuoTone="cyanToBlue"
+                  gradientDuoTone="cyanToBlue"
                 >
                   Add
                 </Button>
@@ -613,7 +615,7 @@ export default function CreatePost() {
                 )}
 
 
-                
+
 
 
               </div>
@@ -746,7 +748,7 @@ export default function CreatePost() {
               )}
 
 
-            
+
 
 
               {imageUploadError && (
@@ -775,6 +777,7 @@ export default function CreatePost() {
           onChange={(value) => {
             setFormData({ ...formData, content: value });
           }}
+          
         />
         {links.map((link, index) => (
           <div key={index} className="my-2 flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
@@ -821,48 +824,48 @@ export default function CreatePost() {
 
         {currentUser.isAdmin ? (
           <div>
-          <Button gradientDuoTone="cyanToBlue" onClick={() => setQuizVisible(!quizVisible)} className="my-4">
-            {quizVisible ? 'Hide Quiz Form' : 'Add Quiz'}
-          </Button>
+            <Button gradientDuoTone="cyanToBlue" onClick={() => setQuizVisible(!quizVisible)} className="my-4">
+              {quizVisible ? 'Hide Quiz Form' : 'Add Quiz'}
+            </Button>
 
-          {quizVisible && (
-            <div>
-              <label htmlFor="Qna" className="block text-sm font-medium text-gray-700">
-                QNA (select the right answer below the option)
-              </label>
-              <TextInput
-                type="text"
-                placeholder="Quiz heading"
-                value={quizData.question}
-                onChange={(e) => setQuizData({ ...quizData, question: e.target.value })}
-                className="mb-4 mt-2"
-              />
-              {quizData.options.map((option, index) => (
-                <div key={index} className="gap-5">
-                  <TextInput
-                    type="text"
-                    placeholder={`Option ${index + 1}`}
-                    value={option}
-                    onChange={(e) => handleOptionChange(index, e.target.value)}
-                    className="m-3"
-                  />
-                  <input
-                    type="radio"
-                    name="correctAnswer"
-                    checked={quizData.correctAnswerIndex === index}
-                    onChange={() => handleCorrectAnswerChange(index)}
-                  />
-                  <label className="m-3">Correct Answer</label>
-                </div>
-              ))}
-              <Button onClick={handleAddQuiz} className="my-4">Save Quiz</Button>
-            </div>
-          )}
-        </div>
-        ):(
+            {quizVisible && (
+              <div>
+                <label htmlFor="Qna" className="block text-sm font-medium text-gray-700">
+                  QNA (select the right answer below the option)
+                </label>
+                <TextInput
+                  type="text"
+                  placeholder="Quiz heading"
+                  value={quizData.question}
+                  onChange={(e) => setQuizData({ ...quizData, question: e.target.value })}
+                  className="mb-4 mt-2"
+                />
+                {quizData.options.map((option, index) => (
+                  <div key={index} className="gap-5">
+                    <TextInput
+                      type="text"
+                      placeholder={`Option ${index + 1}`}
+                      value={option}
+                      onChange={(e) => handleOptionChange(index, e.target.value)}
+                      className="m-3"
+                    />
+                    <input
+                      type="radio"
+                      name="correctAnswer"
+                      checked={quizData.correctAnswerIndex === index}
+                      onChange={() => handleCorrectAnswerChange(index)}
+                    />
+                    <label className="m-3">Correct Answer</label>
+                  </div>
+                ))}
+                <Button onClick={handleAddQuiz} className="my-4">Save Quiz</Button>
+              </div>
+            )}
+          </div>
+        ) : (
           <></>
         )}
-        
+
 
         {currentUser.isAdmin ? (
           <Button type="submit" gradientDuoTone="cyanToBlue">

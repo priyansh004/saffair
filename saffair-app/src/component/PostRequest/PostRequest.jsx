@@ -4,6 +4,15 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { FaCheck, FaTimes } from "react-icons/fa";
+import {
+  Avatar,
+  Dropdown,
+  TextInput,
+  Navbar as Nb,
+} from 'flowbite-react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'; // Import the link icon
+import icn from "./pen-to-square-solid.svg"
 
 export default function PostRequest() {
   const { currentUser } = useSelector((state) => state.user);
@@ -94,20 +103,21 @@ export default function PostRequest() {
       </div>
 
       {(currentUser.isAdmin || currentUser.isContributor) &&
-      filteredPosts.length > 0 ? (
+        filteredPosts.length > 0 ? (
         <>
           <Table hoverable className="shadow-md">
             <Table.Head>
               <Table.HeadCell>Date updated</Table.HeadCell>
               <Table.HeadCell>Post image</Table.HeadCell>
               <Table.HeadCell>Post title</Table.HeadCell>
-              <Table.HeadCell>Category</Table.HeadCell>
+              <Table.HeadCell>Contribution type</Table.HeadCell>
+              <Table.HeadCell>Reward </Table.HeadCell>
+
+              <Table.HeadCell>Reviewed</Table.HeadCell>
               <Table.HeadCell>published</Table.HeadCell>
-              
+
               <Table.HeadCell>Delete</Table.HeadCell>
-              <Table.HeadCell>
-                <span>Edit</span>
-              </Table.HeadCell>
+
             </Table.Head>
             {filteredPosts.map((post) => (
               <Table.Body className="divide-y" key={post._id}>
@@ -118,7 +128,7 @@ export default function PostRequest() {
                   <Table.Cell>
                     <Link to={`/post/${post._id}`}>
                       <img
-                        src={post.image}
+                        src={post.image1}
                         alt={post.title}
                         className="w-20 h-10 object-cover bg-gray-500"
                       />
@@ -132,12 +142,59 @@ export default function PostRequest() {
                       {post.title}
                     </Link>
                   </Table.Cell>
-                  <Table.Cell>{post.category}</Table.Cell>
+                  <Table.Cell>{post.contributionType}</Table.Cell>
+                  <Table.Cell>
+                    {post.coinalloted ? (
+                      <div className="flex items-center gap-1">
+                        <span className="ml-2">{post.coinalloted}</span>
+
+                        <Avatar
+                          alt="coin"
+                          img="../assets/coin2.png"
+                          rounded
+                          className="userprofile w-6 h-auto"
+                        />
+                      </div>
+                    ) : (
+                      <p className="text-red-500 text-3xl">-</p>
+                    )}
+                  </Table.Cell>
+
+
+                  <Table.Cell>
+                    {post.isReviewed ? (
+                      < div className="flex gap-2 flex-row">
+                        <FaCheck className="text-green-500" />
+
+                      </div>
+                    ) : (
+                      < div className="flex flex-row gap-2" >
+                        <FaTimes className="text-red-500" />
+                        <Link
+                          className="text-teal-500 hover:underline"
+                          to={`/reviewContributor/${post._id}`}
+                        >
+                          <FontAwesomeIcon icon={faPenToSquare} />
+                        </Link>
+                      </div>
+                    )}
+                  </Table.Cell>
                   <Table.Cell>
                     {post.publish ? (
-                      <FaCheck className="text-green-500" />
+                      < div className="flex gap-2 flex-row">
+                        <FaCheck className="text-green-500" />
+
+                      </div>
                     ) : (
-                      <FaTimes className="text-red-500" />
+                      < div className="flex flex-row gap-2" >
+                        <FaTimes className="text-red-500" />
+                        <Link
+                          className="text-teal-500 hover:underline"
+                          to={`/editContributor/${post._id}`}
+                        >
+                          <FontAwesomeIcon icon={faPenToSquare} />
+                          </Link>
+                      </div>
                     )}
                   </Table.Cell>
                   <Table.Cell>
@@ -151,14 +208,7 @@ export default function PostRequest() {
                       Delete
                     </span>
                   </Table.Cell>
-                  <Table.Cell>
-                    <Link
-                      className="text-teal-500 hover:underline"
-                      to={`/editContributor/${post._id}`}
-                    >
-                      <span>Edit</span>
-                    </Link>
-                  </Table.Cell>
+
                 </Table.Row>
               </Table.Body>
             ))}

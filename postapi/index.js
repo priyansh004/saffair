@@ -12,7 +12,7 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const verifyToken = require("./utils/verifyUser");
-const voucher =require("./routes/voucher.routes.js");
+const voucher = require("./routes/voucher.routes.js");
 // MIDDLLWARE
 dotenv.config();
 app.use(express.json());
@@ -25,7 +25,6 @@ async function connectDB() {
   try {
     await mongoose.connect(process.env.MONGO_URL);
     console.log("mongodb connected successfully!");
-    
   } catch (err) {
     console.error("unable to connect mongodb!", err);
   }
@@ -44,7 +43,7 @@ app.use("/api/auth", usersAuth);
 app.use("/api/user", usersUpdate);
 app.use("/api/comment", userComment);
 app.use("/api/events", eventRoute);
-app.use("/api/vouchers",voucher)
+app.use("/api/vouchers", voucher);
 
 // app.use("/api/news", news);
 
@@ -54,7 +53,7 @@ app.post("/post", verifyToken, async (req, res, next) => {
   //   return next(errorHandler(403, "You are not allowed to create a post"));
   // }
 
-  if (!req.body.title || !req.body.content) {
+  if (!req.body.title ) {
     return next(errorHandler(400, "Please provide all required fields"));
   }
   const slug = req.body.title
@@ -194,7 +193,7 @@ app.put("/updatepost/:postId/:userId", verifyToken, async (req, res, next) => {
 //api for contributor blog edit and post
 
 app.put(
-  "/updatecontributorpost/:postId",
+  "/reviewcontributorpost/:postId",
   verifyToken,
   async (req, res, next) => {
     // if (!req.user.isAdmin) {
@@ -205,14 +204,47 @@ app.put(
         req.params.postId,
         {
           $set: {
+          
+            coinalloted: req.body.coinalloted,
+            isReviewed: req.body.isReviewed,
+          },
+        },
+        { new: true }
+      );
+      res.status(200).json(updatedPost);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+app.put(
+  "/updatecontributorpost/:postId",
+  verifyToken,
+  async (req, res, next) => {
+    // if (!req.user.isAdmin) {
+    //   return next(errorHandler(403, "You are not allowed to update this post"));
+    // }
+    try {
+      const updatedPost = await Post.findByIdAndUpdate(
+     
+        req.params.postId,
+        {
+          $set: {
             title: req.body.title,
             content: req.body.content,
             category: req.body.category,
             image1: req.body.image1,
             image2: req.body.image2,
-            link1:req.body.link1,
-            link2:req.body.link2,
+            link1: req.body.link1,
+            link2: req.body.link2,
             publish: req.body.publish,
+            coinalloted: req.body.coinalloted,
+            isReviewed: req.body.isReviewed,
+            readingType:req.body.readingType,
+            contributionType:req.body.contributionType,
+            quiz:req.body.quiz
+           
           },
         },
         { new: true }
@@ -224,24 +256,25 @@ app.put(
   }
 );
 //fecthig events title
-app.get('/eventtitle', async (req, res) => {
+app.get("/eventtitle", async (req, res) => {
   try {
     // Assuming mongoose is already connected
-  
-    const Event = mongoose.model('event'); // Assuming 'event' is your Mongoose model name
-  
+
+    const Event = mongoose.model("event"); // Assuming 'event' is your Mongoose model name
+
     // Find events with titles matching the regex pattern
-    const evenTitleEvents = await Event.find({ eventTitle: { $regex: /^(?:\w+\s)*\w$/ } });
-  
+    const evenTitleEvents = await Event.find({
+      eventTitle: { $regex: /^(?:\w+\s)*\w$/ },
+    });
+
     // Extract event titles
-    const eventTitles = evenTitleEvents.map(event => event.title);
-  
+    const eventTitles = evenTitleEvents.map((event) => event.title);
+
     res.json({ eventTitles }); // Send the array of event titles in the response
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Error fetching event titles' }); // Handle errors gracefully
+    res.status(500).json({ message: "Error fetching event titles" }); // Handle errors gracefully
   }
-  
 });
 // Route to fetch all bookmarks of a user
 app.get("/bookmarks/:userId", async (req, res) => {

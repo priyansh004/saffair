@@ -37,9 +37,11 @@ export default function PostPage() {
           throw new Error("Failed to fetch posts");
         }
         return response.json();
+      
       })
       .then((posts) => {
         setPosts(posts);
+        console.log(posts)
         // setLoading(false);
       })
       .catch((error) => {
@@ -69,6 +71,7 @@ export default function PostPage() {
         postInfo.content = modifiedContent;
         setPostInfo(postInfo);
         setLoading(false);
+        console.log(postInfo)
       })
       .catch((error) => {
         console.error("Error fetching post:", error);
@@ -178,11 +181,11 @@ export default function PostPage() {
                   {/* <div>
                   <Ratings />
                 </div> */}
-                  <Qna
+                  {/* <Qna
                     que={postInfo.quizQuestion}
                     options={postInfo.quizOptions}
                     ans={postInfo.correctAnswer}
-                  />
+                  /> */}
                   <div>
                     <CommentSection postId={postInfo._id} />
                   </div>

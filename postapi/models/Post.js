@@ -16,7 +16,7 @@ const PostSchema = new Schema(
       required: true,
       unique: true,
     },
-  
+
     image1: {
       type: String,
       default:
@@ -27,14 +27,20 @@ const PostSchema = new Schema(
       default:
         "https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png",
     },
-   
-    link1:{
-      type:String,
+    coinalloted: {
+      type: Number,
     },
-    link2:{
-      type:String,
+    isReviewed:{
+      type: Boolean,
+      default: false,
     },
-    
+    link1: {
+      type: String,
+    },
+    link2: {
+      type: String,
+    },
+
     category: {
       type: [String],
       default: "uncategorized",
@@ -45,7 +51,6 @@ const PostSchema = new Schema(
     },
     contributionType: {
       type: String,
-      // default: "Blog",u8
     },
     slug: {
       type: String,
@@ -59,15 +64,18 @@ const PostSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    quizQuestion: {
-      type: String,
-    },
-    quizOptions: {
-      type: [String],
-    },
-    correctAnswer: {
-      type: String,
-    },
+    quiz: [{
+      quizQuestion: {
+        type: String,
+      },
+      quizOptions: {
+        type: [String],
+      },
+      correctAnswer: {
+        type: String,
+      },
+    }]
+    
   },
   { timestamps: true }
 );

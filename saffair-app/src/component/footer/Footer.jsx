@@ -66,33 +66,45 @@ export default function Home() {
               </Link>
             </ul>
             <ul className="foot2">
-              <p>Products</p>
-              <Link to="/product">
+              <Link to="/dashboard?tab=profile">
                 <a className="centerItem1" onClick={scrollToTop}>
-                  Sell products on Amazon
+                My Profile  
+                </a>
+              </Link>
+              <br />
+              <Link to="/dashboard?tab=mycoins">
+                <a className="centerItem1" onClick={scrollToTop}>
+                My Coins
+                </a>
+              </Link>
+              <br />
+            
+
+              <Link to="/dashboard?tab=posts">
+                <a className="centerItem1" onClick={scrollToTop}>
+                My Posts
+                </a>
+              </Link>
+              <br />
+              <Link to="/dashboard?tab=voucherlist">
+                <a className="centerItem1" onClick={scrollToTop}>
+               Voucher
+                </a>
+              </Link>
+              <br />
+              <Link to="/dashboard?tab=dashbookmark">
+                <a className="centerItem1" onClick={scrollToTop}>
+               Bookmarks
                 </a>
               </Link>
               <br />
               <Link to="/product">
                 <a className="centerItem1" onClick={scrollToTop}>
-                  Sell on Amazon Business                </a>
-              </Link>
-              <br />
-              <Link to="/product">
-                <a className="centerItem1" onClick={scrollToTop}>
-                  Sell apps on Amazon
+               Products
                 </a>
               </Link>
-              <br />
-              <Link to="/product">
-                <a className="centerItem1" onClick={scrollToTop}>
-                  Become an Affiliate                </a>
-              </Link>
-              <br />
-              <Link to="/product">
-                <a className="centerItem1" onClick={scrollToTop}>
-                  Advertise Your Products                </a>
-              </Link>
+
+             
 
             </ul>
           </div>

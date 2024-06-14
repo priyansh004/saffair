@@ -219,21 +219,21 @@ export default function EventPage() {
                 </h1>
                 <div className="flex justify-center mt-4 space-x-4">
                   <button
-                    onClick={() => addInterest("y")}
+                    onClick={() => addInterest("yes")}
                     className={`${selectedOption === "Yes" ? "bg-green-800" : "bg-green-200 hover:bg-green-600"
                       } text-white font-bold py-2 px-4 rounded transition duration-300`}
                   >
                     Yes
                   </button>
                   <button
-                    onClick={() => addInterest("n")}
+                    onClick={() => addInterest("no")}
                     className={`${selectedOption === "No" ? "bg-red-800" : "bg-red-200 hover:bg-red-600"
                       } text-white font-bold py-2 px-4 rounded transition duration-300`}
                   >
                     No
                   </button>
                   <button
-                    onClick={() => addInterest("m")}
+                    onClick={() => addInterest("maybe")}
                     className={`${selectedOption === "Maybe" ? "bg-blue-800" : "bg-blue-200 hover:bg-blue-600"
                       } text-white font-bold py-2 px-4 rounded transition duration-300`}
                   >
