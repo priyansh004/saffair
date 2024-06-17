@@ -2,19 +2,92 @@ const router = require("express").Router();
 // const { verify } = require("jsonwebtoken");
 const Event = require("../models/Event.model");
 const verifyToken = require("../utils/verifyUser");
-
+const campcount = require("../models/Camcount.model")
 //create event
+const call = async (event) => {
+  // Your logic for handling the event goes here
+  console.log("Event received:", event);
+  // Example: Send event to another service, process it further, etc.
+};
 
 router.post("/", async (req, res) => {
+  // Check if req.body contains valid data
+  if (!req.body) {
+    return res.status(400).json({ error: "Request body is missing or empty" });
+  }
+
   const newEvent = new Event(req.body);
   try {
-    const saveEvent = await newEvent.save();
-
-    res.status(200).json(saveEvent);
-    navigate(`/events`);
-
+    const savedEvent = await newEvent.save();
+    // Call the `call` function with the saved event
+    await call(savedEvent);
+    res.status(201).json(savedEvent); // Use 201 for successful creation
   } catch (error) {
-    return res.status(500).json(error);
+    console.error("Error saving event:", error);
+    res.status(500).json({ error: "Failed to save event" });
+  }
+});
+// Add interest to an event
+router.post('/addInterest', async (req, res) => {
+  const { eventId, userId, response } = req.body;
+  
+  try {
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).send('Event not found');
+    }
+
+    let Count = await campcount.findOne({ eventId });
+    if (!Count) {
+      Count = await campcount.create({ eventId, yesCount: 0, noCount: 0, maybeCount: 0, userResponses: [] });
+    }
+    
+    const existingInterest = await campcount.findOne({ eventId, userResponses: { $elemMatch: { userId } } });
+
+    if (existingInterest) {
+      
+       return res.status(400).json({ message: "User has already shown interest in the event" });
+    }
+    
+    const userResponse = {
+      userId,
+      response,
+    };
+     
+    await campcount.updateOne(
+      { eventId },
+      {
+        $push: { userResponses: userResponse },
+        $inc: { [`${userResponse.response}Count`]: 1 },      }
+    );
+    
+    const updatedCampCount = await campcount.findOne({ eventId });
+
+    res.status(200).json(updatedCampCount);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Error adding interest to event');
+  }
+});
+
+router.get('/getCounts/:eventId', async (req, res) => {
+  const { eventId } = req.params;
+
+  try {
+    const CampCount = await campcount.findOne({ eventId });
+
+    if (!CampCount) {
+      return res.status(404).send('Event not found');
+    }
+
+    res.status(200).json({ // Changed status code to 200
+      yes: CampCount.yesCount,
+      no: CampCount.noCount,
+      maybe: CampCount.maybeCount,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Error fetching counts for event');
   }
 });
 //interest
@@ -36,7 +109,9 @@ router.put("/addInterest/:eventId/:userId", async (req, res) => {
     );
 
     if (existingInterest) {
-      return res.status(400).json({ message: "User has already shown interest in the event" });
+      return res
+        .status(400)
+        .json({ message: "User has already shown interest in the event" });
     }
 
     // Create a new interest object
@@ -81,7 +156,7 @@ router.put("updateEvent/:EventId/:userId", async (req, res) => {
 router.put("/addEntry/:eventId/:userId", async (req, res) => {
   try {
     // Extract data from the request body with validation
-    const {   content, image1, image2, link1, link2, category } = req.body;
+    const { content, image1, image2, link1, link2, category } = req.body;
 
     if (!content) {
       return res.status(400).json({ message: "Content is required" });
@@ -128,7 +203,6 @@ router.put("/addEntry/:eventId/:userId", async (req, res) => {
   }
 });
 
-
 // router.put("joinEvent/:eventId/:userId", async (req, res) => {
 //   if (req.user.isAdmin) {
 //     res.status(500).json("you are not allowed to join this event");
@@ -158,8 +232,19 @@ router.put("/addEntry/:eventId/:userId", async (req, res) => {
 
 //api for list event
 
+router.get('/eventTitles', async (req, res) => {
+  try {
+    const currentDate = new Date(); // Get the current date
+    const events = await Event.find({ endDate: { $gte: currentDate } }, 'eventTitle'); // Query to find events where endDate is greater than or equal to currentDate
+    res.json(events); // Send the event titles as JSON response
+  } catch (error) {
+    console.error('Error fetching event titles:', error);
+    res.status(500).json({ error: 'Failed to fetch event titles' });
+  }
+});
+
 router.get("/Events", async (req, res) => {
-  res.json(await Event.find().sort({ createdAt: -1 }).limit(3));
+  res.json(await Event.find().sort({ createdAt: -1 }));
 });
 
 //api for event page

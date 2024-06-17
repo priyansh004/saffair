@@ -25,6 +25,28 @@ export default function CreatePost() {
 
   const navigate = useNavigate();
 
+  const [links, setLinks] = useState(['']); // Initialize with an empty link field
+  const [uploadErrors, setUploadErrors] = useState([]);
+
+  const handleAddLink = () => {
+    if (links.length < 2) {
+      setLinks([...links, '']);
+    } else {
+      setUploadErrors(['Maximum 2 links allowed']);
+    }
+  };
+
+  const handleRemoveLink = (index) => {
+    const updatedLinks = [...links];
+    updatedLinks.splice(index, 1);
+    setLinks(updatedLinks);
+  };
+
+  const handleLinkChange = (index, value) => {
+    const updatedLinks = [...links];
+    updatedLinks[index] = value;
+    setLinks(updatedLinks);
+  };
   const handleUpdloadImage = async () => {
     try {
       if (!file) {
@@ -61,6 +83,9 @@ export default function CreatePost() {
       console.log(error);
     }
   };
+  const click = () => {
+    console.log(formData)
+  }
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -72,69 +97,82 @@ export default function CreatePost() {
         credentials: "include",
         body: JSON.stringify(formData),
       });
-      const data = await res.json();
+
       if (!res.ok) {
-        setPublishError(data.message);
+        const errorData = await res.json();
+        setPublishError(errorData.message || "An error occurred");
         return;
       }
 
-      if (res.ok) {
-        setPublishError(null);
-        // navigate(`/post/${data.slug}`);
-        // navigate(`/blog`);
-        alert("event created successfully!  ");
-      }
+      const data = await res.json();
+      setPublishError(null);
+      // navigate(`/post/${data.slug}`);
+      navigate(`/events`);
+      alert("Event created successfully!");
+
     } catch (error) {
-      setPublishError("Something went wrong");
+      console.error("Error submitting the form:", error);
+      setPublishError("Something went wrong. Please try again later.");
     }
   };
 
-  console.log(formData);
+
+  const handleChange = (event) => {
+    const { id, value } = event.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [id]: value
+    }));
+  };
 
   return (
     <div className="p-3 max-w-3xl mx-auto mt-8 min-h-screen">
+      <Button onClick={click}>
+        clikc me
+      </Button>
       <h1 className="text-center text-3xl my-7 font-semibold">
         Create A Event
       </h1>
       <div className="Dropdown">
-      { (
+        {(
           <Select
+          required
 
             onChange={(e) =>
               setFormData({ ...formData, readingType: e.target.value })
             }
           >
             <option value="uncategorized">Select a category</option>
-                    <option value="agriculture">Agriculture</option>
-                    <option value="bollywood">Bollywood</option>
-                    <option value="business">Business</option>
-                    <option value="crime">Crime</option>
-                    <option value="economy">Economy</option>
-                    <option value="education">Education</option>
-                    <option value="entertainment">Entertainment</option>
-                    <option value="environment">Environment</option>
-                    <option value="events">Events</option>
-                    <option value="fashion">Fashion</option>
-                    <option value="foreign">Foreign</option>
-                    <option value="general">General</option>
-                    <option value="health">Health</option>
-                    <option value="hollywood">Hollywood</option>
-                    <option value="international">International</option>
-                    <option value="legal">Legal</option>
-                    <option value="lifestyle">Lifestyle</option>
-                    <option value="national">National</option>
-                    <option value="politics">Politics</option>
-                    <option value="religious">Religious</option>
-                    <option value="science">Science</option>
-                    <option value="sports">Sports</option>
-                    <option value="stock market">Stock Market</option>
-                    <option value="technology">Technology</option>
-                    <option value="weather">Weather</option>
-                    <option value="other">Other</option>
+            <option value="agriculture">Agriculture</option>
+            <option value="bollywood">Bollywood</option>
+            <option value="business">Business</option>
+            <option value="crime">Crime</option>
+            <option value="economy">Economy</option>
+            <option value="education">Education</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="environment">Environment</option>
+            <option value="events">Events</option>
+            <option value="fashion">Fashion</option>
+            <option value="foreign">Foreign</option>
+            <option value="general">General</option>
+            <option value="health">Health</option>
+            <option value="hollywood">Hollywood</option>
+            <option value="international">International</option>
+            <option value="legal">Legal</option>
+            <option value="lifestyle">Lifestyle</option>
+            <option value="national">National</option>
+            <option value="politics">Politics</option>
+            <option value="religious">Religious</option>
+            <option value="science">Science</option>
+            <option value="sports">Sports</option>
+            <option value="stock market">Stock Market</option>
+            <option value="technology">Technology</option>
+            <option value="weather">Weather</option>
+            <option value="other">Other</option>
           </Select>
         )}
       </div>
-      
+
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-4 sm:flex-row justify-between">
           <TextInput
@@ -148,23 +186,23 @@ export default function CreatePost() {
             }
           />
           <div>
-                          
-                          <TextInput
-                            type="date"
-                            id="startDate"
-                            // onChange={handleChange}
-                            required
-                          />
-                        </div>
-                        <div>
-                         
-                          <TextInput
-                            type="date"
-                            id="endDate"
-                            // onChange={handleChange}
-                            required
-                          />
-                        </div>
+            <TextInput
+              type="date"
+              id="startDate"
+              value={formData.startDate}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <TextInput
+              type="date"
+              id="endDate"
+              value={formData.endDate}
+              onChange={handleChange}
+              required
+            />
+          </div>
         </div>
         <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
           <FileInput
@@ -209,6 +247,46 @@ export default function CreatePost() {
             setFormData({ ...formData, eventDescription: value });
           }}
         />
+        {links.map((link, index) => (
+          <div key={index} className="my-2 flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
+            <input
+              type="text"
+              
+              value={index === 0 ? formData.link1 : formData.link2}
+              onChange={(e) => {
+                const updatedFormData = { ...formData };
+                if (index === 0) {
+                  updatedFormData.link1 = e.target.value;
+                } else {
+                  updatedFormData.link2 = e.target.value;
+                }
+                setFormData(updatedFormData);
+              }}
+              placeholder="Enter link"
+              className="flex-1 border border-gray-300 rounded-md py-1 px-3"
+            />
+            <Button
+              type="button"
+              gradientDuoTone="redToOrange"
+              size="sm"
+              outline
+              onClick={() => handleRemoveLink(index)}
+            >
+              Remove
+            </Button>
+          </div>
+        ))}
+
+
+        <div className="flex gap-4">
+          <Button type="button" onClick={handleAddLink} gradientDuoTone="cyanToBlue">
+            Add more Link
+          </Button>
+
+        </div>
+        {uploadErrors.length > 0 && (
+          <Alert color="failure">{uploadErrors.join('\n')}</Alert>
+        )}
 
         <Button type="submit" gradientDuoTone="cyanToBlue">
           Publish

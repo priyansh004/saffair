@@ -22,13 +22,13 @@ const firebaseConfig = {
   // messagingSenderId: "862933082272",
   // appId: "1:862933082272:web:3f81b35f6191b5674e69c5",
 
-  apiKey: "AIzaSyDh8PRbsZ6Ovs_IK8fiC4PALuVid7nQ0b8",
-  authDomain: "test-f8e24.firebaseapp.com",
-  projectId: "test-f8e24",
-  storageBucket: "test-f8e24.appspot.com",
-  messagingSenderId: "142165432615",
-  appId: "1:142165432615:web:ab1944e0df93f575c13102",
-  measurementId: "G-42N1GDTTS3"
+  apiKey: "AIzaSyBCpDYvIDLD_OkvzB8xkryb6chupaxp7CE",
+  authDomain: "saffair-9ade9.firebaseapp.com",
+  projectId: "saffair-9ade9",
+  storageBucket: "saffair-9ade9.appspot.com",
+  messagingSenderId: "1062426993353",
+  appId: "1:1062426993353:web:f16b7ab8ff27cd4791e318",
+  measurementId: "G-6YM75HJFSL"
 };
 
 // Initialize Firebase

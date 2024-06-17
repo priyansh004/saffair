@@ -53,7 +53,7 @@ export default function DashBookMark() {
                 >
                   {" "}
                   <img
-                    src={post.image}
+                    src={post.image1}
                     alt={post.title}
                     className="w-20 h-10 object-cover bg-gray-500"
                   />
@@ -68,7 +68,13 @@ export default function DashBookMark() {
                   <span>{post.title}</span>
                 </Link>
               </Table.Cell>
-              <Table.Cell>{post.category}</Table.Cell>
+              <Table.Cell>
+              <Link
+                  className="font-medium text-gray-900 dark:text-white"
+                  to={`/post/${post._id}`}
+                >
+                  <span>{post.contributionType}</span>
+                </Link></Table.Cell>
               {/* <Table.Cell>
                 <span
                   onClick={() => {

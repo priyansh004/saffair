@@ -86,7 +86,7 @@ export default function ContributorPost() {
               <Table.HeadCell>Date updated</Table.HeadCell>
               <Table.HeadCell>Post image</Table.HeadCell>
               <Table.HeadCell>Post title</Table.HeadCell>
-              <Table.HeadCell>approved</Table.HeadCell>
+              <Table.HeadCell>published</Table.HeadCell>
               <Table.HeadCell>Category</Table.HeadCell>
               <Table.HeadCell>Delete</Table.HeadCell>
               <Table.HeadCell>
@@ -102,7 +102,7 @@ export default function ContributorPost() {
                   <Table.Cell>
                     <Link to={`/post/${post._id}`}>
                       <img
-                        src={post.image}
+                        src={post.image1}
                         alt={post.title}
                         className="w-20 h-10 object-cover bg-gray-500"
                       />
@@ -123,7 +123,7 @@ export default function ContributorPost() {
                       <FaTimes className="text-red-500" />
                     )}
                   </Table.Cell>
-                  <Table.Cell>{post.category}</Table.Cell>
+                  <Table.Cell>{post.contributionType}</Table.Cell>
                   <Table.Cell>
                     <span
                       onClick={() => {

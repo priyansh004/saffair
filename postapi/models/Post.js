@@ -14,7 +14,10 @@ const PostSchema = new Schema(
     title: {
       type: String,
       required: true,
-      unique: true,
+      unique:false
+    },
+    eventtitle:{
+      type:String,
     },
 
     image1: {
@@ -60,10 +63,9 @@ const PostSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    bookmarks: {
-      type: Boolean,
-      default: false,
-    },
+    bookmarks: [{
+      type:String
+    }],
     quiz: [{
       quizQuestion: {
         type: String,

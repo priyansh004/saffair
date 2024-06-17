@@ -14,7 +14,11 @@ import { useSelector } from "react-redux";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useNavigate } from "react-router-dom";
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { FaCheck, FaTimes } from 'react-icons/fa';
+import { faLink } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios'
 export default function EventPage() {
   const { id } = useParams();
   const [eventInfo, setEventInfo] = useState(null);
@@ -25,6 +29,9 @@ export default function EventPage() {
   const [publishError, setPublishError] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
+
+  const [show, setShow] = useState(true)
+  const [ans, setans] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,105 +47,12 @@ export default function EventPage() {
         console.log(error);
       }
     };
+    fetchResponseCounts();
 
     fetchData();
   }, [id]);
 
-  const handleUploadImage = async (imageNumber) => {
-    try {
-      if (!file) {
-        setImageUploadError("Please select an image");
-        return;
-      }
-      setImageUploadError(null);
-      const storage = getStorage(app);
-      const fileName = new Date().getTime() + "-" + file.name;
-      const storageRef = ref(storage, fileName);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setImageUploadProgress(progress.toFixed(0));
-        },
-        (error) => {
-          setImageUploadError("Image upload failed");
-          setImageUploadProgress(null);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            setImageUploadProgress(null);
-            setImageUploadError(null);
-            if (imageNumber === 1) {
-              setFormData({ ...formData, image1: downloadURL });
-            } else if (imageNumber === 2) {
-              setFormData({ ...formData, image2: downloadURL });
-            }
-          });
-        }
-      );
-    } catch (error) {
-      setImageUploadError("Image upload failed");
-      setImageUploadProgress(null);
-      console.log(error);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      eventTitle: eventInfo.eventTitle,
-    }));
-    console.log(formData)
-
-    try {
-      const res = await fetch(
-        `http://localhost:6600/api/events/addEntry/${id}/${currentUser._id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(formData),
-
-        }
-      );
-      const data = await res.json();
-      // console.log(data)
-      if (!res.ok) {
-        setPublishError(data.message);
-        return;
-      }
-
-      if (res.ok) {
-        setPublishError(null);
-        navigate(`/events`);
-      }
-    } catch (error) {
-      setPublishError("Something went wrong");
-    }
-  };
-
   const [links, setLinks] = useState(['']); // Initialize with an empty link field
-  const [uploadErrors, setUploadErrors] = useState([]);
-
-  const handleAddLink = () => {
-    if (links.length < 2) {
-      setLinks([...links, '']);
-    } else {
-      setUploadErrors(['Maximum 2 links allowed']);
-    }
-  };
-
-  const handleRemoveLink = (index) => {
-    const updatedLinks = [...links];
-    updatedLinks.splice(index, 1);
-    setLinks(updatedLinks);
-  };
-
   const [selectedOption, setSelectedOption] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -148,15 +62,13 @@ export default function EventPage() {
 
   const handleButtonClick = async (option) => {
     try {
+      setShow(false);
       setLoading(true);
       setMessage('');
 
       var response = option
-
-      const eventId = 'your_event_id'; // Replace with actual event ID
-      const userId = 'your_user_id'; // Replace with actual user ID
-
-      await addInterest(eventId, userId, response);
+      setans(option)
+      await addInterest(response);
       setMessage('Interest added successfully!');
     } catch (error) {
       console.error('Failed to add interest:', error);
@@ -170,22 +82,27 @@ export default function EventPage() {
   const addInterest = async (response) => {
     try {
       const formData = {
-        response: response
+        response: response,
+        userId: currentUser._id,
+        eventId: id,
       };
+      console.log(formData)
 
       const res = await fetch(
-        `http://localhost:6600/api/events/addInterest/${id}/${currentUser._id}`,
+        `http://localhost:6600/api/events/addInterest`,
         {
-          method: "PUT",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           credentials: "include",
           body: JSON.stringify(formData),
         }
-      );
 
-      if (!res.ok) {
+      );
+      // console.log(first)
+
+      if (res === 200) {
         throw new Error(`Failed to add interest to event: ${res.statusText}`);
       }
 
@@ -196,61 +113,149 @@ export default function EventPage() {
     }
   };
 
+  const [responseCounts, setResponseCounts] = useState({
+    yes: 0,
+    no: 0,
+    maybe: 0
+  });
 
+  const fetchResponseCounts = async () => {
+    try {
+      const response = await axios.get(`http://localhost:6600/api/events/getCounts/${id}`);
+      setResponseCounts(response.data);
+    } catch (error) {
+      console.error('Error fetching response counts:', error);
+    }
+  };
+
+  function extractDate(dateStr) {
+    // Use Date object to parse the date string
+    const dateObj = new Date(dateStr);
+  
+    // Year, month, day (zero-indexed)
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Add leading zero for single-digit months
+    const day = String(dateObj.getDate()).padStart(2, '0');
+  
+    // Format the date as YYYY-MM-DD
+    return `${year}-${month}-${day}`;
+  }
+  
   return (
-    <>
-      <div className="mt-20" >
-        {eventInfo ? (
-          <
+    <div className="mt-20">
+      {eventInfo ? (
+        <>
 
-            >
-            <div className="flex justify-center text-3xl mb-4">Event name: {eventInfo.eventTitle}</div>
-            <img src={eventInfo.eventImage} className="w-full h-screen object-cover" alt="eventImage" />
-            <div
-              className="post-content   mb-6 mt-4  ml-2"
-              dangerouslySetInnerHTML={{ __html: eventInfo.eventDescription }}
-            />
-
-            <div className="flex flex-col justify-between items-center  m-8">
-
-              <div>
-                <h1 className="text-center text-3xl my-7 font-semibold">
-                  Are you willing to join?
-                </h1>
-                <div className="flex justify-center mt-4 space-x-4">
-                  <button
-                    onClick={() => addInterest("yes")}
-                    className={`${selectedOption === "Yes" ? "bg-green-800" : "bg-green-200 hover:bg-green-600"
-                      } text-white font-bold py-2 px-4 rounded transition duration-300`}
-                  >
-                    Yes
-                  </button>
-                  <button
-                    onClick={() => addInterest("no")}
-                    className={`${selectedOption === "No" ? "bg-red-800" : "bg-red-200 hover:bg-red-600"
-                      } text-white font-bold py-2 px-4 rounded transition duration-300`}
-                  >
-                    No
-                  </button>
-                  <button
-                    onClick={() => addInterest("maybe")}
-                    className={`${selectedOption === "Maybe" ? "bg-blue-800" : "bg-blue-200 hover:bg-blue-600"
-                      } text-white font-bold py-2 px-4 rounded transition duration-300`}
-                  >
-                    Maybe
-                  </button>
-                </div>
-              </div>
+          <img
+            src={eventInfo.eventImage}
+            className="w-full h-64 md:h-screen object-cover"
+            alt="eventImage"
+          />
+          <div className="flex flex-col items-start my-4 p-4 lg:p-8 mx-auto max-w-5xl bg-white rounded-lg shadow-md">
+            <div className="text-4xl font-bold mb-2 text-teal-600">Event Title: {eventInfo.eventTitle}</div>
+            <div className="text-lg text-gray-600">
+            Start Date: {extractDate(eventInfo.startDate)} | End Date: {extractDate(eventInfo.endDate)}
             </div>
+          </div>
+          <div
+            className="post-content mb-6  p-4 lg:p-6  mx-auto max-w-5xl bg-white rounded-lg shadow-md"
+            dangerouslySetInnerHTML={{ __html: eventInfo.eventDescription }}
+
+          >
+
+          </div>
+
+          {(eventInfo.link1 || eventInfo.link2) && (
+            <div className="flex gap-4 items-start my-4 p-4 lg:p-8 mx-auto max-w-5xl bg-white rounded-lg shadow-md">
+              {eventInfo.link1 && (
+                <a target="_blank" rel="noopener noreferrer" href={eventInfo.link1} className="bg-blue-100 text-white font-bold py-2 px-4 rounded-full w-[100px] max-w-xs flex flex-row justify-center">
+                  <FontAwesomeIcon icon={faLink} className="w-6 h-6 text-blue-500" />
+                </a>
+              )}
+              {eventInfo.link2 && (
+                <a target="_blank" rel="noopener noreferrer" href={eventInfo.link2} className="bg-blue-100 text-white font-bold py-2 px-4 rounded-full w-[100px] max-w-xs flex flex-row justify-center">
+                  <FontAwesomeIcon icon={faLink} className="w-6 h-6 text-blue-500" />
+                </a>
+              )}
+            </div>
+          )}
+
+          <div className="flex flex-col justify-between items-center  m-8">
+
+            <div>
+              <h1 className="text-center text-3xl my-7 font-semibold">
+                Are you willing to join?
+              </h1>
+              {show ? (
+                <>
+
+                  <div className="flex justify-center mt-4 space-x-4">
+                    <button
+                      onClick={() => handleButtonClick("yes")}
+                      className={`${selectedOption === "Yes" ? "bg-green-800" : "bg-green-200 hover:bg-green-600"
+                        } text-white font-bold py-2 px-4 rounded transition duration-300`}
+                    >
+                      Yes
+                    </button>
+                    <button
+                      onClick={() => handleButtonClick("no")}
+                      className={`${selectedOption === "No" ? "bg-red-800" : "bg-red-200 hover:bg-red-600"
+                        } text-white font-bold py-2 px-4 rounded transition duration-300`}
+                    >
+                      No
+                    </button>
+                    <button
+                      onClick={() => handleButtonClick("maybe")}
+                      className={`${selectedOption === "Maybe" ? "bg-blue-800" : "bg-blue-200 hover:bg-blue-600"
+                        } text-white font-bold py-2 px-4 rounded transition duration-300`}
+                    >
+                      Maybe
+                    </button>
+
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h5>your response {ans} recorded.</h5>
+                </>
+              )}
+            </div>
+          </div>
+          {currentUser.isAdmin && (
+             <div className="flex flex-col justify-between items-center m-8">
+             <div>
+               <h1 className="text-center text-3xl my-7 font-semibold">
+                 Response Counts of this Event
+               </h1>
+               <div className="flex justify-center mt-4 space-x-4">
+                 <div className="bg-green-400  text-white font-bold py-2 px-4 rounded">
+                   Yes: {responseCounts.yes}
+                 </div>
+                 <div className="bg-red-400  text-white font-bold py-2 px-4 rounded">
+                   No: {responseCounts.no}
+                 </div>
+                 <div className="bg-blue-400  text-white font-bold py-2 px-4 rounded">
+                   Maybe: {responseCounts.maybe}
+                 </div>
+               </div>
+               <button
+                 onClick={fetchResponseCounts}
+                 className=" text-center mt-4 bg-gray-800 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
+               >
+                 Refresh Counts
+               </button>
+             </div>
+           </div>
+          )}
+
+        </>
+      ) : (
+        <p>Loading...</p>
+      )
+      }
+    </div >
 
 
-
-          </>
-        ) : (
-          <p>Loading...</p>
-        )}
-      </div>
-    </>
   );
 }
 

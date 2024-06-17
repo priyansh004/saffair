@@ -18,6 +18,7 @@ const Events = () => {
         setEvents(data);
         setLoading(false);
         initializeMap(data);
+        console.log(data)
       } catch (error) {
         console.error(error);
         // Handle error

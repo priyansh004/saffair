@@ -291,8 +291,8 @@ app.get("/bookmarks/:userId", async (req, res) => {
   }
 });
 
-// Route to bookmark a post
 app.post("/bookmark/:postId", async (req, res) => {
+ 
   try {
     const { postId } = req.params;
     const { userId } = req.body;
@@ -333,13 +333,13 @@ app.post("/unbookmark/:postId", async (req, res) => {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    // Check if the user already bookmarked the post
+    // Check if the user has bookmarked the post
     if (!post.bookmarks.includes(userId)) {
-      return res.status(400).json({ message: "Post is not bookmarked" });
+      return res.status(400).json({ message: "Post not bookmarked by this user" });
     }
 
     // Remove the user ID from the bookmarks array
-    post.bookmarks = post.bookmarks.filter((bookmark) => bookmark !== userId);
+    post.bookmarks = post.bookmarks.filter(id => id !== userId);
     await post.save();
 
     res.status(200).json({ message: "Post unbookmarked successfully" });
@@ -348,6 +348,7 @@ app.post("/unbookmark/:postId", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
 
 const PORT = process.env.PORT || 6600;
 app.listen(PORT, () => {

@@ -17,6 +17,27 @@ export default function Home() {
       behavior: "smooth",
     });
   };
+
+  const share = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Check out this product!',
+          text: 'I found this amazing product, check it out.',
+          url: window.location.href, // Or specify a different URL
+        });
+      } catch (error) {
+        console.error('Error sharing:', error);
+      }
+    } else {
+      console.log('Web Share API not supported in this browser.');
+    }
+  };
+
+  const handleClick = (e) => {
+    scrollToTop();
+    share();
+  };
   return (
     <footer className="footMain">
       <div className="foot-panel2">
@@ -26,85 +47,144 @@ export default function Home() {
         <div className="f1">
           <div className="f2">
             <ul className="foot1">
-              <Link to="/events">
+              <li>
                 <a className="centerItem1" onClick={scrollToTop}>
-                  Campaigns
+                  Knowledge centre
                 </a>
-              </Link>
-              <br />
-              <Link to="/blog">
-                <a className="centerItem1" onClick={scrollToTop}>
-                  Blogs
-                </a>
-              </Link>
-              <br />
-
-              <Link to="/news">
-                <a className="centerItem1" onClick={scrollToTop}>
-                  News
-                </a>
-              </Link>
-              <br />
-
-              <Link to="/Update">
-                <a className="centerItem1" onClick={scrollToTop}>
-                  Updates
-                </a>
-              </Link>
-              <br />
-
-              <Link to="/contactus">
-                <a className="centerItem1" onClick={scrollToTop}>
-                  Contact Us
-                </a>
-              </Link>
-              <br />
-              <Link to="/aboutus">
-                <a className="centerItem1" onClick={scrollToTop}>
-                  About Us
-                </a>
-              </Link>
+              </li>
+              <li className="ml-4">
+                <Link to="/blog">
+                  <a className="centerItem1 flex items-center" onClick={scrollToTop}>
+                    <svg className="w-1 h-1 mr-1" fill="currentColor" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="4" cy="4" r="4" />
+                    </svg>
+                    Blogs
+                  </a>
+                </Link>
+              </li>
+              <li className="ml-4">
+                <Link to="/news">
+                  <a className="centerItem1 flex items-center" onClick={scrollToTop}>
+                    <svg className="w-1 h-1 mr-1" fill="currentColor" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="4" cy="4" r="4" />
+                    </svg>
+                    News
+                  </a>
+                </Link>
+              </li>
+              <li className="ml-4">
+                <Link to="/Update">
+                  <a className="centerItem1 flex items-center" onClick={scrollToTop}>
+                    <svg className="w-1 h-1 mr-1" fill="currentColor" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
+                      <circle cx="4" cy="4" r="4" />
+                    </svg>
+                    Updates
+                  </a>
+                </Link>
+              </li>
+              <li>
+                <Link to="/contactus">
+                  <a className="centerItem1" onClick={scrollToTop}>
+                    Calculator
+                  </a>
+                </Link>
+              </li>
+              <li>
+                <Link to="/contactus">
+                  <a className="centerItem1" onClick={scrollToTop}>
+                    Contact Us
+                  </a>
+                </Link>
+              </li>
+              <li>
+                <Link to="/aboutus">
+                  <a className="centerItem1" onClick={scrollToTop}>
+                    About Us
+                  </a>
+                </Link>
+              </li>
             </ul>
+
             <ul className="foot2">
               <Link to="/dashboard?tab=profile">
                 <a className="centerItem1" onClick={scrollToTop}>
-                My Profile  
+                  My Profile
                 </a>
               </Link>
               <br />
               <Link to="/dashboard?tab=mycoins">
                 <a className="centerItem1" onClick={scrollToTop}>
-                My Coins
-                </a>
-              </Link>
-              <br />
-            
-
-              <Link to="/dashboard?tab=posts">
-                <a className="centerItem1" onClick={scrollToTop}>
-                My Posts
-                </a>
-              </Link>
-              <br />
-              <Link to="/dashboard?tab=voucherlist">
-                <a className="centerItem1" onClick={scrollToTop}>
-               Voucher
+                  My Coins
                 </a>
               </Link>
               <br />
               <Link to="/dashboard?tab=dashbookmark">
                 <a className="centerItem1" onClick={scrollToTop}>
-               Bookmarks
+                  My Bookmarks
+                </a>
+              </Link>
+              <br />
+              <Link to="/dashboard?tab=profile">
+                <a className="centerItem1" onClick={scrollToTop}>
+                  Job profile
+                </a>
+              </Link>
+              <br />
+              <Link to="">
+                <a className="centerItem1" onClick={scrollToTop}>
+                  My Order
+                </a>
+              </Link>
+
+              <br />
+              <a className="centerItem1" onClick={handleClick}>
+                refer a friend
+              </a>
+
+            
+            </ul>
+            <ul className="foot2">
+              <Link to="/product">
+                <a className="centerItem1" onClick={scrollToTop}>
+                  Product
+                </a>
+              </Link>
+              <br/>
+              <Link to="/product">
+                <a className="centerItem1" onClick={scrollToTop}>
+                  Buy Saffair Aero 200                  </a>
+              </Link>
+              <br />
+              <Link to="/product">
+                <a className="centerItem1" onClick={scrollToTop}>
+                  ⁠Buy Saffair Aero 450
                 </a>
               </Link>
               <br />
               <Link to="/product">
                 <a className="centerItem1" onClick={scrollToTop}>
-               Products
+                   ⁠Buy Attachments
                 </a>
               </Link>
+              <br />
+              <Link to="/product">
+                <a className="centerItem1" onClick={scrollToTop}>
+                  ⁠Buy Filters               </a>
+              </Link>
+              <br />
+              <Link to="/product">
+                <a className="centerItem1" onClick={scrollToTop}>
+                  ⁠Become a Dealer             </a>
+              </Link>
+              <br />
+              <Link to="/product">
+                <a className="centerItem1" onClick={scrollToTop}>
+                  ⁠Corporate Gifting             </a>
+              </Link>
+              <br />
 
-             
+
+
 
             </ul>
           </div>

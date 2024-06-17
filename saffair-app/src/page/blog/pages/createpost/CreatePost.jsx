@@ -63,12 +63,17 @@ export default function CreatePost() {
     setFormData(updatedFormData);
     console.log(updatedFormData);
   };
-
+  const handlechange = async () => {
+    setFormData(prevFormData => ({ ...prevFormData, title: prevFormData.title + " : " + ee }));
+  };
+  
   /////////Form publiched API
   const [publishError, setPublishError] = useState(null);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    console.log(formData); // This will log the updated formData after setFormData runs
+    
     try {
       const res = await fetch("http://localhost:6600/post", {
         method: "POST",
@@ -79,20 +84,20 @@ export default function CreatePost() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
+      
       if (!res.ok) {
         setPublishError(data.message);
         return;
       }
-
-      if (res.ok) {
-        setPublishError(null);
-        // navigate(`/post/${data.slug}`);
-        navigate(`/blog`);
-      }
+  
+      // If response is OK
+      setPublishError(null);
+      navigate(`/blog`);
     } catch (error) {
       setPublishError("Something went wrong");
     }
   };
+  
 
 
   /////////Documents upload functions
@@ -235,7 +240,7 @@ export default function CreatePost() {
   };
 
 
-
+  const [ee, setEE] = useState({});
   const [cselectedOption, csetSelectedOption] = useState("Blog");
   const [links, setLinks] = useState(['']); // Initialize with an empty link field
   const [uploadErrors, setUploadErrors] = useState([]);
@@ -268,18 +273,13 @@ export default function CreatePost() {
     setDivVisible2(false);
   };
 
-
-  useEffect(() => {
-    // Fetch events from backend
-    fetchEventsFromBackend();
-  }, []);
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState('');
 
   const fetchEventsFromBackend = async () => {
     try {
       // Fetch events data from backend
-      const response = await fetch('http://localhost:6600/eventstitle');
+      const response = await fetch(`http://localhost:6600/api/events/eventTitles`);
       const data = await response.json();
 
       // Assuming events data is an array of objects with a 'title' property
@@ -290,7 +290,8 @@ export default function CreatePost() {
   };
 
   const handleEventChange = (event) => {
-    setSelectedEvent(event.target.value);
+    setFormData({ ...formData, eventtitle: event.target.value });
+
   };
 
   const isImage = (url) => {
@@ -348,6 +349,17 @@ export default function CreatePost() {
   const addother = () => {
     setOther(true)
   }
+  const handleSelectChange = (e) => {
+    const selectedValue = e.target.value;
+    setFormData({ ...formData, contributionType: selectedValue });
+
+    // Check if the selected value is "join our campaigns" and trigger your function
+    if (selectedValue === 'join our campaigns') {
+      fetchEventsFromBackend(); // Replace handleJoinCampaigns with your actual function
+    }
+  };
+
+ 
   return (
     <div className="mb-6 p-3 max-w-3xl mx-auto mt-8 min-h-screen">
       <h1 className="text-center text-3xl my-7 font-semibold">
@@ -375,9 +387,8 @@ export default function CreatePost() {
         </label>
         <Select
 
-          onChange={(e) =>
-            setFormData({ ...formData, contributionType: e.target.value })
-          }
+          onChange={handleSelectChange}
+
           required
         >
           <option value="">select</option>
@@ -487,35 +498,39 @@ export default function CreatePost() {
             {/* Conditional div content for campaign */}
             <div>
               <label htmlFor="Title" className="block text-sm font-medium text-gray-700">
-                Title
+                Events:
               </label>
               <select
                 id="Title"
                 name="Title"
-                value={selectedEvent}
+                value={formData.eventtitle}
                 onChange={handleEventChange}
                 className="block w-full mt-1 p-2 border border-gray-300 rounded-md"
               >
                 <option value="">Select an event</option>
                 {events.map((event) => (
-                  <option key={event.id} value={event.title}>
-                    {event.title}
+                  <option value={event.eventTitle}>
+                    {event.eventTitle}
                   </option>
                 ))}
               </select>
             </div>
-
-            <div className="flex flex-col gap-4 justify-between">
-
+           
+            <div className="flex  mt-4 flex-col gap-4 justify-between">
+              <label htmlFor="Title" className="block text-sm font-medium text-gray-700">
+                Title
+              </label>
               <TextInput
                 type="text"
                 placeholder="Title"
                 required
                 id="title"
                 className="flex-1 my-2 "
-                onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
-                }
+                value={formData.title}
+                onChange={(e)=>{
+                  setFormData({ ...formData, title: e.target.value });
+
+                }}
               />
 
               < div className=" gap-2">
@@ -777,7 +792,7 @@ export default function CreatePost() {
           onChange={(value) => {
             setFormData({ ...formData, content: value });
           }}
-          
+
         />
         {links.map((link, index) => (
           <div key={index} className="my-2 flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">

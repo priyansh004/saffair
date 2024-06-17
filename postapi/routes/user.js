@@ -43,7 +43,7 @@ routes.put("/update/:userId", verifyToken, async (req, res, next) => {
           password: req.body.password,
           firstName: req.body.firstName,
           lastName: req.body.lastName,
-          number: req.body.number.slice(1),
+          number: req.body.number.slice(2),
           dob: req.body.dob,
           gender: req.body.gender,
           country: req.body.country,

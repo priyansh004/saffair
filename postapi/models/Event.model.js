@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 const data = new mongoose.Schema({
   userId: {
     type: String,
@@ -29,17 +28,8 @@ const data = new mongoose.Schema({
   },
 });
 
-const interestSchema = new mongoose.Schema({
-  userId: {
-    type: String,
-    required: true,
-  },
-  response: {
-    type: String,
-    enum: ['y', 'n', 'm'],
-    required: true
-  }
-});
+
+
 const eventSchema = mongoose.Schema(
   {
     // userId: {
@@ -60,15 +50,13 @@ const eventSchema = mongoose.Schema(
     eventEntries: [data],
     startDate: {
       type: Date,
-      // required: true,
+      required: true,
     },
     endDate: {
       type: Date,
-      // required: true,
+      required: true,
     },
-    interest: [interestSchema], // Array of user interests
-
-    
+   
     link1:{
       type:String,
     },
