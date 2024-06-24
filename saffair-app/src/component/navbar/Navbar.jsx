@@ -170,12 +170,14 @@ export default function Navbar({ _id }) {
               Home
             </a>
           </Link>
-          <a
-            className={`centerItem ${activeLink === 'calculator' ? 'active' : ''}`}
-            onClick={() => handleClick('calculator')}
-          >
-            Calculator
-          </a>
+          <Link to="/calculator" className="links">
+            <a
+              className={`centerItem ${activeLink === 'calculator' ? 'active' : ''}`}
+              onClick={() => handleClick('calculator')}
+            >
+              calculator
+            </a>
+          </Link>
 
           <div className="read relative ">
             <Link
@@ -263,34 +265,34 @@ export default function Navbar({ _id }) {
               <>
                 {currentUser.isAdmin ? (
                   <div
-                    className="flex items-center p-0.5 rounded-full"
-                    style={{ border: '0.5px solid #2196ba' }}
+                    className="flex items-center p-0.5 	rounded"
+                    style={{ border: '2px solid #2196ba' }}
                   >
                     <Avatar
                       alt="user"
                       img={currentUser.profilePicture}
                       rounded
-                      className="userprofile"
+                      className="p-0.5 px-2 muserprofile"
                     />
-                    <p className="mx-2 text-l hidden sm:block">
+                    <p className="mx-2 text-l text-[#327f97]  hidden sm:block">
                       {currentUser.username}
                     </p>
                   </div>
                 ) : (
                   <div
-                    className="flex items-center p-0.5 rounded-full"
-                    style={{ border: '0.5px solid #2196ba' }}
+                    className="flex items-center p-0.5 	rounded"
+                    style={{ border: '2px solid #2196ba' }}
                   >
                     <Avatar
                       alt="user"
                       img={currentUser.profilePicture}
                       rounded
-                      className="userprofile"
+                      className="p-1  px-2 userprofile"
                     />
-                    <p className="mx-2 text-l hidden sm:block">
+                    <p className="mx-2 text-l text-[#327f97] hidden sm:block">
                       {currentUser.username}
                     </p>
-                    <div className="border-l border-black h-7 p-1"></div>
+                    <div className="border-l border-[#327f97] h-7 p-1"></div>
 
                     <Avatar
                       alt="coin"
@@ -298,7 +300,7 @@ export default function Navbar({ _id }) {
                       rounded
                       className="userprofile"
                     />
-                    <p className="mx-2 text-l hidden sm:block">{coin}</p>
+                    <p className="mx-2 text-[#327f97] text-l hidden sm:block">{coin}</p>
                   </div>
                 )}
               </>
@@ -363,9 +365,7 @@ export default function Navbar({ _id }) {
           </div>
         )}
 
-        <Link to="/searchpage" onClick={scrollToTop}>
-          <FontAwesomeIcon icon={faMagnifyingGlass} className="searchIcon" />
-        </Link>
+        
         <div className="menu ">
           <a href="#" id="dropdownLink" onClick={toggleDropdown}>
             <FontAwesomeIcon icon={faBars} />

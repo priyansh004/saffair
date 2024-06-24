@@ -309,7 +309,7 @@ export default function CreatePost() {
   ];
 
   const addCategory = (category) => {
-    if (formData.category.length < 5 && !formData.category.includes(category)) {
+    if (formData.category.length < 3 && !formData.category.includes(category)) {
       setFormData(prevFormData => ({ ...prevFormData, category: [...prevFormData.category, category] }));
     }
   };
@@ -438,7 +438,7 @@ export default function CreatePost() {
                   onClick={() => setDropdownVisible(!dropdownVisible)}
                   className="mt-1 block w-full py-3 px-4 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-[#1ec2f4] focus:border-[#1ec2f4] sm:text-base md:text-sm flex items-center justify-between"
                 >
-                  <span>{formData.otherCategory ? formData.otherCategory : "Show category (max 5)"}</span>
+                  <span>{formData.otherCategory ? formData.otherCategory : "Show category (max 3)"}</span>
                   <FaChevronDown className="w-4 h-4" />
                 </button>
                 {dropdownVisible && (

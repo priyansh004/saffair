@@ -83,7 +83,7 @@ export default function Home() {
                 </Link>
               </li>
               <li>
-                <Link to="/contactus">
+                <Link to="/calculator">
                   <a className="centerItem1" onClick={scrollToTop}>
                     Calculator
                   </a>
@@ -240,7 +240,7 @@ export default function Home() {
           <a href="">Your Ads Privacy Choices</a>
         </div>
         <div className="copyright">
-          <Link to="https://agevole.in/" target="_blank">  ©2024 Saffair All rights reserved | Design and Developed by Agevole Innovatio </Link>
+          <Link to="https://agevole.in/" target="_blank">  ©2024 Saffair All rights reserved | Design and Developed by Agevole Innovation </Link>
         </div>
       </div>
     </footer>

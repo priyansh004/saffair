@@ -428,7 +428,7 @@ export default function Contributors() {
 
                 <div>
                   <label >
-                    Pincode<span className="text-red-500 ml-1">*</span>
+                    Pincode
                   </label>
                   <div>
                     <Pincode

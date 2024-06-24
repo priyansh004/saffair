@@ -32,6 +32,7 @@ import EventPage from "../component/eventpage/EventPage";
 import Events from "../component/homepageComponent/Event/Events"
 import ProductPage from "./product/ProductPage"
 import ReviewPost from "./blog/pages/editpost/ReviewPost";
+import Calculator from "./calculator/Calculator";
 // import { Discuss } from "react-loader-spinner";
 
 export const WeatherImageContext = createContext();
@@ -83,6 +84,7 @@ export default function Home() {
                 <Route path="/community" element={<Community />} />
                 <Route path="/news" element={<News />} />
                 <Route path="/update" element={<Updates />} />
+                <Route path="/calculator" element={<Calculator />} />
                 <Route path="/searchpage" element={<Searchpage />} />
                 <Route element={<PrivateRoute />}>
                   <Route path="/dashboard" element={<Dashboard />} />

@@ -38,7 +38,7 @@ const Qna = ({ quiz}) => {
               className="flex justify-center mx-auto"
               style={{ color: "white", fontWeight: "bold", fontFamily: "Raleway" }}
             >
-              <div className="mt-4"> QnA for Above Reading</div>
+              <div className="mt-4">Check Knowledge $ earn</div>
             </div>
           </div>
           <div

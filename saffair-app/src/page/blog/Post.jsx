@@ -48,6 +48,21 @@ export default function Post({
       behavior: "smooth",
     });
   };
+
+  const stripHtmlTags = (html) => {
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    return div.textContent || div.innerText || "";
+};
+
+// Utility function to truncate content
+const truncateContent = (content, length) => {
+    const strippedContent = stripHtmlTags(content);
+    return strippedContent.length > length ? strippedContent.substring(0, length) + "..." : strippedContent;
+};
+
+const previewContent = truncateContent(content, 25);
+
   return (
     <>
 
@@ -69,14 +84,17 @@ export default function Post({
             <Link to={`/post/${_id}`} className="link">
               <div className="postTitle">
                 <h5 className="text-[20px]">{title}</h5>
-                {/* <p>{content}</p> */}
+              </div>
+              <div>
+              <p className="mb-1">{previewContent}</p>
+
               </div>
             </Link>
             <div className="flex flex-row gap-3">
               <div className="flex flex-wrap gap-2">
                 {category.map((tag, index) => (
                   <div key={index} className="flex items-center">
-                    <p className="tag text-blue-600 text-[14px]">&bull; {tag}</p>
+                    <p className="tag text-blue-600 text-[14px]"> {tag}</p>
                     {/* <span className="text-gray-400 text-[12px]">&bull;</span>
                     <span className="text-blue-600 text-[12px]">{tag}</span> */}
                   </div>

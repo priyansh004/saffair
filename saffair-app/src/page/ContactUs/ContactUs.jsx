@@ -64,7 +64,7 @@ const ContactUs = () => {
             <p className="contact-text">
               We are here to help you, whatever kind of help you need
             </p>
-            <p className="contact-email">inquiry@saffair.in</p>
+            <p className="contact-email">admin@saffair.in</p>
           </div>
           <div className="contact-info-item">
             <div className="horizontal-line"></div>

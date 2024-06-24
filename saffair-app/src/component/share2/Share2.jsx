@@ -11,26 +11,39 @@ import {
 export default function Share2() {
 
     const shareToWhatsApp = () => {
-        // Get the current URL
         const currentUrl = window.location.href;
-      
-        // Construct the WhatsApp share URL
         const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(currentUrl)}`;
-      
-        // Open the WhatsApp share URL in a new tab
         window.open(whatsappUrl, "_blank");
-      };
-      
+    };
+
+    const shareToFacebook = () => {
+        const currentUrl = window.location.href;
+        const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`;
+        window.open(facebookUrl, "_blank");
+    };
+
+    const shareToTwitter = () => {
+        const currentUrl = window.location.href;
+        const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}`;
+        window.open(twitterUrl, "_blank");
+    };
+
+    const shareToLinkedIn = () => {
+        const currentUrl = window.location.href;
+        const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`;
+        window.open(linkedInUrl, "_blank");
+    };
+
     return (
         <div className="share2con">
             <div className="Jack">
-                <p className="share2">Like what you see? Share with your friend</p>
-                <icons className="share2Icons">
-                    <FontAwesomeIcon className="ic" icon={faSquareFacebook} />
-                    <FontAwesomeIcon className="ic" icon={faSquareXTwitter} />
-                    <FontAwesomeIcon className="ic" icon={faLinkedin} />
-                    <FontAwesomeIcon className="ic" icon={faWhatsapp} onClick={shareToWhatsApp}/>
-                </icons>
+                <p className="share2">Like what you see? Share with your friends</p>
+                <div className="share2Icons">
+                    <FontAwesomeIcon className="ic" icon={faSquareFacebook} onClick={shareToFacebook} />
+                    <FontAwesomeIcon className="ic" icon={faSquareXTwitter} onClick={shareToTwitter} />
+                    <FontAwesomeIcon className="ic" icon={faLinkedin} onClick={shareToLinkedIn} />
+                    <FontAwesomeIcon className="ic" icon={faWhatsapp} onClick={shareToWhatsApp} />
+                </div>
             </div>
         </div>
     );

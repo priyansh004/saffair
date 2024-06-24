@@ -31,6 +31,9 @@ routes.put("/update/:userId", verifyToken, async (req, res, next) => {
         errorHandler(400, "Username can only contain letters and numbers")
       );
     }
+    if(req.body.number){
+      req.body.number=req.body.number.slice(2)
+    }
   }
   try {
     const updatedUser = await Users.findByIdAndUpdate(
@@ -43,7 +46,7 @@ routes.put("/update/:userId", verifyToken, async (req, res, next) => {
           password: req.body.password,
           firstName: req.body.firstName,
           lastName: req.body.lastName,
-          number: req.body.number.slice(2),
+          number: req.body.number,
           dob: req.body.dob,
           gender: req.body.gender,
           country: req.body.country,
